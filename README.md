@@ -178,8 +178,16 @@ en premier lors du déploiement — c'est l'étape la plus susceptible de révé
 ### Étapes de déploiement (Railway ou Render)
 
 1. Créer un compte et un nouveau projet sur Railway ou Render
-2. Connecter votre dépôt Git (créez-en un si ce n'est pas déjà fait : `git init`, committez ces
-   fichiers — `.gitignore` est déjà configuré pour exclure `.env`, `db.sqlite3`, etc.)
+2. Connecter votre dépôt Git — le projet est déjà initialisé en local avec un premier commit
+   (voir `sienss-repo.bundle` fourni). Pour le récupérer chez vous :
+   ```bash
+   git clone sienss-repo.bundle sienss
+   cd sienss
+   git remote add origin https://github.com/<votre-compte>/sienss.git
+   git push -u origin main
+   ```
+   Créez d'abord un dépôt vide sur GitHub (sans README ni .gitignore, pour éviter un conflit),
+   puis remplacez l'URL ci-dessus par la vôtre.
 3. Ajouter une base de données PostgreSQL depuis l'interface de l'hébergeur — il vous fournira
    automatiquement une variable `DATABASE_URL`
 4. Définir les variables d'environnement (voir `.env.example`) : `SECRET_KEY` (générez une vraie
