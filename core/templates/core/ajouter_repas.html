@@ -1,0 +1,111 @@
+{% extends "core/base.html" %}
+{% block titre %}Ajouter un repas{% endblock %}
+{% block contenu %}
+<div class="carte">
+    <h1>Ajouter un repas</h1>
+    <p class="discret">Ajoutez un ou plusieurs aliments à ce repas. Laissez les lignes non utilisées vides.</p>
+    <form method="post">
+        {% csrf_token %}
+        <h2 style="font-size:1rem;">Le repas</h2>
+        {% for field in repas_form %}
+            <div class="champ">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}<p style="color:#c0392b;font-size:0.85rem;">{{ error }}</p>{% endfor %}
+            </div>
+        {% endfor %}
+
+        <h2 style="font-size:1rem;">Aliments consommés</h2>
+        {{ aliment_formset.management_form }}
+        {% if aliment_formset.non_form_errors %}
+            <p style="color:#c0392b;font-size:0.85rem;">{{ aliment_formset.non_form_errors }}</p>
+        {% endif %}
+        {% for form in aliment_formset %}
+            <div style="display:flex; gap:0.8rem; align-items:flex-start; margin-bottom:0.6rem; padding-bottom:0.6rem; border-bottom:1px solid #f0f0f0;">
+                <div style="flex:3; position:relative;" class="conteneur-recherche-aliment">
+                    <input type="text" class="recherche-aliment-texte" placeholder="Rechercher un aliment…" autocomplete="off">
+                    <div class="suggestions-aliment" style="display:none;"></div>
+                    {{ form.aliment }}
+                    {% for error in form.aliment.errors %}<p style="color:#c0392b;font-size:0.8rem;">{{ error }}</p>{% endfor %}
+                </div>
+                <div style="flex:1;">
+                    {{ form.quantite_g }}
+                    {% for error in form.quantite_g.errors %}<p style="color:#c0392b;font-size:0.8rem;">{{ error }}</p>{% endfor %}
+                </div>
+                {{ form.id }}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="bouton" style="margin-top:0.8rem;">Enregistrer le repas</button>
+    </form>
+</div>
+
+<style>
+    .aliment-select { display: none; }
+    .suggestions-aliment {
+        position: absolute; top: 100%; left: 0; right: 0; z-index: 10;
+        background: white; border: 1px solid #d7d7d7; border-radius: 8px;
+        max-height: 200px; overflow-y: auto; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .suggestions-aliment div {
+        padding: 0.5rem 0.7rem; cursor: pointer; font-size: 0.9rem;
+    }
+    .suggestions-aliment div:hover { background: var(--vert-clair); }
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.conteneur-recherche-aliment').forEach(function (conteneur) {
+        const champTexte = conteneur.querySelector('.recherche-aliment-texte');
+        const selectCache = conteneur.querySelector('.aliment-select');
+        const suggestions = conteneur.querySelector('.suggestions-aliment');
+        let minuteur = null;
+
+        // Si une valeur est déjà sélectionnée (ex: après une erreur de validation
+        // du formulaire), pré-remplir le champ texte avec son libellé.
+        if (selectCache.value) {
+            const optionActive = selectCache.querySelector(`option[value="${selectCache.value}"]`);
+            if (optionActive) champTexte.value = optionActive.textContent.trim();
+        }
+
+        champTexte.addEventListener('input', function () {
+            selectCache.value = '';  // toute nouvelle saisie invalide la sélection précédente
+            const requete = champTexte.value.trim();
+            clearTimeout(minuteur);
+            if (requete.length < 2) {
+                suggestions.style.display = 'none';
+                return;
+            }
+            minuteur = setTimeout(function () {
+                fetch(`{% url 'rechercher_aliment' %}?q=${encodeURIComponent(requete)}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        suggestions.innerHTML = '';
+                        if (data.resultats.length === 0) {
+                            suggestions.style.display = 'none';
+                            return;
+                        }
+                        data.resultats.forEach(function (aliment) {
+                            const ligne = document.createElement('div');
+                            ligne.textContent = aliment.categorie ? `${aliment.nom} (${aliment.categorie})` : aliment.nom;
+                            ligne.addEventListener('click', function () {
+                                selectCache.value = aliment.id;
+                                champTexte.value = aliment.nom;
+                                suggestions.style.display = 'none';
+                            });
+                            suggestions.appendChild(ligne);
+                        });
+                        suggestions.style.display = 'block';
+                    });
+            }, 250);  // léger délai pour éviter une requête à chaque frappe
+        });
+
+        // Fermer les suggestions si on clique ailleurs
+        document.addEventListener('click', function (evenement) {
+            if (!conteneur.contains(evenement.target)) {
+                suggestions.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "core/base.html" %}
+{% block titre %}Historique{% endblock %}
+{% block contenu %}
+<div class="carte">
+    <h1>Mon historique</h1>
+    <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
+        {% for cle, label in periodes %}
+            <a href="?periode={{ cle }}"
+               class="bouton {% if periode != cle %}secondaire{% endif %}"
+               style="{% if periode != cle %}background:#e8e8e8; color:#555;{% endif %} font-size:0.85rem; padding:0.4rem 0.9rem;">
+                {{ label }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <h2>Repas récents</h2>
+    {% for r in repas %}
+        <p>
+            <strong>{{ r.get_type_repas_display }}</strong> — {{ r.date }} à {{ r.heure }}<br>
+            {% for ra in r.aliments_consommes.all %}
+                <span class="discret">{{ ra.quantite_g }} g de {{ ra.aliment.nom }}</span><br>
+            {% endfor %}
+        </p>
+    {% empty %}
+        <p class="discret">Aucun repas enregistré pour l'instant.</p>
+    {% endfor %}
+
+    <h2 style="margin-top:1.5rem;">Alertes reçues</h2>
+    {% for alerte in alertes %}
+        <div class="alerte {{ alerte.regle.niveau_alerte }}">
+            <strong>{{ alerte.regle.identifiant }}</strong> — {{ alerte.regle.message }}
+            <div class="discret">{{ alerte.date_generation|date:"d/m/Y H:i" }} — statut : {{ alerte.get_statut_display }}</div>
+        </div>
+    {% empty %}
+        <p class="discret">Aucune alerte reçue pour l'instant.</p>
+    {% endfor %}
+</div>
+{% endblock %}

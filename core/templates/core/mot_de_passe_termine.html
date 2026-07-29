@@ -1,0 +1,9 @@
+{% extends "core/base.html" %}
+{% block titre %}Mot de passe modifié{% endblock %}
+{% block contenu %}
+<div class="carte">
+    <h1>Mot de passe modifié ✅</h1>
+    <p>Votre mot de passe a bien été changé. Vous pouvez maintenant vous connecter.</p>
+    <a href="{% url 'connexion' %}" class="bouton">Se connecter</a>
+</div>
+{% endblock %}

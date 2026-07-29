@@ -1,0 +1,21 @@
+{% extends "core/base.html" %}
+{% block titre %}Créer un compte{% endblock %}
+{% block contenu %}
+<div class="carte">
+    <h1>Créer votre compte SIENSS</h1>
+    <p class="discret">Vos données de santé sont utilisées uniquement pour vous fournir des analyses personnalisées. SIENSS ne pose aucun diagnostic médical et ne remplace pas un professionnel de santé.</p>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="champ">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<p class="discret">{{ field.help_text }}</p>{% endif %}
+                {% for error in field.errors %}<p style="color:#c0392b;font-size:0.85rem;">{{ error }}</p>{% endfor %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="bouton">Créer mon compte</button>
+    </form>
+    <p class="discret" style="margin-top:1rem;">Déjà un compte ? <a href="{% url 'connexion' %}">Se connecter</a></p>
+</div>
+{% endblock %}

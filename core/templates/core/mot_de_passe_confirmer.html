@@ -1,0 +1,23 @@
+{% extends "core/base.html" %}
+{% block titre %}Nouveau mot de passe{% endblock %}
+{% block contenu %}
+<div class="carte">
+    <h1>Choisir un nouveau mot de passe</h1>
+    {% if validlink %}
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="champ">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% for error in field.errors %}<p style="color:#c0392b;font-size:0.85rem;">{{ error }}</p>{% endfor %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="bouton">Enregistrer le nouveau mot de passe</button>
+        </form>
+    {% else %}
+        <p style="color:#c0392b;">Ce lien de réinitialisation n'est plus valide — il a peut-être déjà été utilisé, ou a expiré.</p>
+        <a href="{% url 'mot_de_passe_reinitialiser' %}" class="bouton secondaire">Demander un nouveau lien</a>
+    {% endif %}
+</div>
+{% endblock %}

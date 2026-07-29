@@ -1,0 +1,63 @@
+{% extends "core/base.html" %}
+{% block titre %}Tableau de bord{% endblock %}
+{% block contenu %}
+<div class="carte">
+    <h1>Bonjour, {{ user.get_full_name|default:user.username }} 👋</h1>
+    <div class="stat">
+        <div class="valeur">{{ repas_aujourdhui.count }}</div>
+        <div class="label">repas aujourd'hui</div>
+    </div>
+    <div class="stat">
+        <div class="valeur">{{ nb_repas_semaine }}</div>
+        <div class="label">repas cette semaine</div>
+    </div>
+    {% if profil.imc %}
+    <div class="stat">
+        <div class="valeur">{{ profil.imc }}</div>
+        <div class="label">IMC estimé</div>
+    </div>
+    {% endif %}
+    {% if score_alimentaire %}
+    <div class="stat">
+        <div class="valeur">{{ score_alimentaire.valeur|floatformat:0 }}/100</div>
+        <div class="label">Score alimentaire (7j)</div>
+    </div>
+    {% endif %}
+    {% if score_fiabilite %}
+    <div class="stat">
+        <div class="valeur">{{ score_fiabilite.valeur|floatformat:0 }}%</div>
+        <div class="label">Fiabilité de l'analyse</div>
+    </div>
+    {% endif %}
+    <div style="margin-top:1.2rem;">
+        <a href="{% url 'ajouter_repas' %}" class="bouton">+ Ajouter un repas</a>
+    </div>
+</div>
+
+{% if score_fiabilite and score_fiabilite.valeur < 50 %}
+<div class="carte" style="border-left:4px solid #d99a00;">
+    <p class="discret" style="margin:0;">⚠️ La fiabilité de vos analyses est encore faible ({{ score_fiabilite.valeur|floatformat:0 }}%) — enregistrez vos repas plus régulièrement pour des résultats plus précis.</p>
+</div>
+{% endif %}
+
+<div class="carte">
+    <h2>Alertes actives</h2>
+    {% if alertes_actives %}
+        {% for alerte in alertes_actives %}
+            <div class="alerte {{ alerte.regle.niveau_alerte }}">
+                <strong>{{ alerte.regle.identifiant }}</strong> — {{ alerte.regle.message }}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="discret">Aucune alerte active pour le moment.</p>
+    {% endif %}
+</div>
+
+{% if not profil.taille_cm %}
+<div class="carte">
+    <h2>Complétez votre profil</h2>
+    <p class="discret">Votre profil de santé n'est pas encore complet. Cela permet au moteur d'analyse de vous fournir des alertes personnalisées.</p>
+    <a href="{% url 'profil_sante' %}" class="bouton secondaire">Compléter mon profil</a>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "core/base.html" %}
+{% block titre %}Connexion{% endblock %}
+{% block contenu %}
+<div class="carte">
+    <h1>Connexion</h1>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="champ">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}<p style="color:#c0392b;font-size:0.85rem;">{{ error }}</p>{% endfor %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="bouton">Se connecter</button>
+    </form>
+    <p class="discret" style="margin-top:1rem;">
+        <a href="{% url 'mot_de_passe_reinitialiser' %}">Mot de passe oublié ?</a>
+    </p>
+    <p class="discret">Pas encore de compte ? <a href="{% url 'inscription' %}">Créer un compte</a></p>
+</div>
+{% endblock %}

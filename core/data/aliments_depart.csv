@@ -1,0 +1,28 @@
+nom,nom_local,categorie,origine,portion_standard_g,calories,proteines,glucides,lipides,fibres,sodium_mg,sucres,graisses_saturees,potassium_mg,vitamine_k_mcg,index_glycemique,allergenes,niveau_confiance,source_donnee
+Riz blanc cuit,,Céréale,International,150,130,2.7,28,0.3,1,150,0.1,0.1,35,0,73,,moyen,Table de composition générique
+Igname bouillie,Igname,Tubercule,Bénin,150,118,1.5,27,0.2,4,9,0.5,0.05,816,0,51,,moyen,Table de composition FAO/Afrique de l'Ouest
+Gari sec (semoule),Gari,Céréale/dérivé manioc,Bénin,80,357,1.5,86,0.6,4,25,3,0.1,271,0,80,,moyen,Table de composition FAO/Afrique de l'Ouest
+Eba (gari réhydraté),Eba,Céréale/dérivé manioc,Bénin,150,120,0.5,29,0.2,1.3,8,1,0.03,90,0,80,,faible,Estimation à valider (réhydratation ~3x le poids sec)
+Akassa,Pâte de maïs fermentée,Céréale/dérivé maïs,Bénin,150,110,2.5,24,0.5,1.5,5,0.5,0.1,90,0,65,,faible,Estimation à valider
+Attiéké,Attiéké,Céréale/dérivé manioc,Côte d'Ivoire/Bénin,150,152,1.2,35,0.3,2,10,1,0.05,220,0,80,,moyen,Table de composition FAO/Afrique de l'Ouest
+Banane plantain bouillie,Plantain,Fruit/féculent,Bénin,150,122,1.3,32,0.2,2.3,4,0.3,0.09,499,0.7,55,,moyen,Table de composition FAO/Afrique de l'Ouest
+Haricot niébé cuit,Wake,Légumineuse,Bénin,150,116,7.7,20.8,0.5,6.7,4,0.2,0.15,278,0,42,,moyen,Table de composition FAO/Afrique de l'Ouest
+Sauce arachide,Sauce arachide,Sauce,Bénin,150,250,9,10,20,3,400,3,3.5,300,0,,arachide,faible,Estimation à valider
+Sauce gombo,Sauce gombo,Sauce,Bénin,150,60,2,6,3,3,320,2,0.5,180,80,,,faible,Estimation à valider
+Poisson braisé,Poisson braisé,Poisson,Bénin,120,180,22,0,10,0,300,0,2.5,380,0,,poisson,faible,Estimation à valider
+Poisson fumé,Poisson fumé,Poisson,Bénin,100,220,35,0,8,0,1200,0,2,450,0,,poisson,faible,Estimation à valider (fourchette large selon procédé de salage/fumage : 900-1500mg)
+Poulet braisé,Poulet braisé,Viande,Bénin,120,215,27,0,11,0,350,0,3,300,0,,,faible,Estimation à valider
+Sauce tomate,Sauce tomate,Sauce,International,100,60,1.5,7,3,1.5,250,4,0.4,280,0,,,moyen,Table de composition générique
+Huile de palme rouge,Huile de palme rouge,Matière grasse,Bénin,15,884,0,0,100,0,0,0,49,0,8,,,moyen,Table de composition FAO/Afrique de l'Ouest
+Piment frais,Piment,Légume,Bénin,10,40,1.9,9,0.4,1.5,9,5,0.1,322,0,,,moyen,Table de composition générique
+Oignon,,Légume,International,50,40,1.1,9.3,0.1,1.7,4,4.2,0,146,0.4,,,eleve,Table de composition générique
+Tomate fraîche,,Légume,International,100,18,0.9,3.9,0.2,1.2,5,2.6,0,237,7.9,,,eleve,Table de composition générique
+Pain blanc,,Céréale,International,60,265,9,49,3.2,2.7,491,5,0.7,115,0,75,gluten,eleve,Table de composition générique
+Lait entier,,Produit laitier,International,200,61,3.2,4.8,3.3,0,44,5.1,1.9,150,0,,lactose,eleve,Table de composition générique
+Sauce au poisson (base bouillon),Bouillon poisson,Sauce,Bénin,150,45,4,3,2,0.5,600,1,0.4,200,0,,poisson,faible,Estimation à valider
+Ananas frais,,Fruit,Bénin,150,50,0.5,13,0.1,1.4,1,10,0,109,0.7,66,,eleve,Table de composition générique
+Mangue fraîche,,Fruit,Bénin,150,60,0.8,15,0.4,1.6,1,14,0.1,168,4.2,51,,eleve,Table de composition générique
+Choux verts cuits,,Légume,International,100,25,1.3,5.8,0.1,2.5,20,2.2,0,170,108,,,eleve,Table de composition générique
+Pamplemousse,,Fruit,International,150,32,0.7,8,0.1,1,0,7,0,150,0,25,,eleve,Table de composition générique
+Bonbon réglisse,,Confiserie,International,20,340,2,90,0.5,1,90,55,0.1,50,0,70,,faible,Estimation
+Épinards cuits,,Légume,International,100,23,2.9,3.6,0.4,2.2,70,0.4,0.1,466,483,,,eleve,Table de composition générique

@@ -1,0 +1,131 @@
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+
+from .models import (
+    Aliment,
+    AllergieUtilisateur,
+    PathologieUtilisateur,
+    ProfilSante,
+    Repas,
+    RepasAliment,
+    TraitementUtilisateur,
+    Utilisateur,
+)
+
+
+class InscriptionForm(UserCreationForm):
+    email = forms.EmailField(required=True, label="Adresse e-mail")
+    consentement_donnees_sante = forms.BooleanField(
+        required=True,
+        label="J'accepte que mes données de santé soient traitées pour l'analyse "
+              "nutritionnelle (voir conditions d'utilisation).",
+    )
+
+    class Meta:
+        model = Utilisateur
+        fields = ["username", "email", "password1", "password2"]
+        labels = {"username": "Nom d'utilisateur"}
+
+
+class ProfilSanteForm(forms.ModelForm):
+    class Meta:
+        model = ProfilSante
+        fields = [
+            "taille_cm", "poids_actuel_kg", "poids_cible_kg",
+            "niveau_activite_physique", "objectif_nutritionnel",
+            "grossesse", "allaitement",
+        ]
+        labels = {
+            "taille_cm": "Taille (cm)",
+            "poids_actuel_kg": "Poids actuel (kg)",
+            "poids_cible_kg": "Poids cible (kg, optionnel)",
+            "niveau_activite_physique": "Niveau d'activité physique",
+            "objectif_nutritionnel": "Objectif",
+            "grossesse": "Grossesse en cours",
+            "allaitement": "Allaitement en cours",
+        }
+
+
+class RepasForm(forms.ModelForm):
+    class Meta:
+        model = Repas
+        fields = ["date", "heure", "type_repas", "commentaire"]
+        widgets = {
+            "date": forms.DateInput(attrs={"type": "date"}),
+            "heure": forms.TimeInput(attrs={"type": "time"}),
+        }
+        labels = {
+            "date": "Date",
+            "heure": "Heure",
+            "type_repas": "Type de repas",
+            "commentaire": "Commentaire (optionnel)",
+        }
+
+
+class RepasAlimentForm(forms.ModelForm):
+    aliment = forms.ModelChoiceField(
+        queryset=Aliment.objects.all().order_by("nom"),
+        label="Aliment",
+        required=False,
+        widget=forms.Select(attrs={"class": "aliment-select"}),
+    )
+
+    class Meta:
+        model = RepasAliment
+        fields = ["aliment", "quantite_g"]
+        labels = {"quantite_g": "Quantité (g)"}
+
+    def clean(self):
+        """Une ligne vide (ni aliment ni quantité) est acceptée : elle sera ignorée
+        par le formset plutôt que de bloquer l'enregistrement du repas."""
+        cleaned = super().clean()
+        aliment = cleaned.get("aliment")
+        quantite = cleaned.get("quantite_g")
+        if aliment and not quantite:
+            self.add_error("quantite_g", "Indiquez une quantité pour cet aliment.")
+        if quantite and not aliment:
+            self.add_error("aliment", "Sélectionnez un aliment pour cette quantité.")
+        return cleaned
+
+
+# Formset : jusqu'à 8 aliments par repas dans la V1 (pas de suppression dynamique en JS
+# pour rester simple ; l'utilisateur laisse les lignes en trop vides).
+RepasAlimentFormSet = forms.modelformset_factory(
+    RepasAliment,
+    form=RepasAlimentForm,
+    extra=8,
+    can_delete=False,
+)
+
+
+class AllergieForm(forms.ModelForm):
+    class Meta:
+        model = AllergieUtilisateur
+        fields = ["allergene", "gravite"]
+        labels = {"allergene": "Allergène", "gravite": "Gravité (optionnel)"}
+        widgets = {"allergene": forms.TextInput(attrs={"placeholder": "Ex : arachide, lactose, gluten"})}
+
+
+class PathologieForm(forms.ModelForm):
+    class Meta:
+        model = PathologieUtilisateur
+        fields = ["pathologie", "statut"]
+        labels = {"pathologie": "Pathologie", "statut": "Statut (optionnel)"}
+        widgets = {"pathologie": forms.TextInput(attrs={"placeholder": "Ex : diabète, hypertension"})}
+
+
+class TraitementForm(forms.ModelForm):
+    class Meta:
+        model = TraitementUtilisateur
+        fields = ["medicament", "dose", "frequence", "date_debut", "date_fin"]
+        labels = {
+            "medicament": "Médicament",
+            "dose": "Dose (optionnel)",
+            "frequence": "Fréquence (optionnel)",
+            "date_debut": "Date de début (optionnel)",
+            "date_fin": "Date de fin (optionnel)",
+        }
+        widgets = {
+            "date_debut": forms.DateInput(attrs={"type": "date"}),
+            "date_fin": forms.DateInput(attrs={"type": "date"}),
+        }

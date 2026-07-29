@@ -1,0 +1,18 @@
+{% extends "core/base.html" %}
+{% block titre %}Supprimer mon compte{% endblock %}
+{% block contenu %}
+<div class="carte" style="border-left:4px solid #c0392b;">
+    <h1>Supprimer mon compte</h1>
+    <p>Cette action est <strong>définitive</strong>. Toutes vos données seront effacées :
+       profil de santé, historique de repas, alertes, allergies, pathologies et traitements déclarés.</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="champ">
+            <label for="mot_de_passe">Confirmez avec votre mot de passe</label>
+            <input type="password" name="mot_de_passe" id="mot_de_passe" required>
+        </div>
+        <button type="submit" class="bouton" style="background:#c0392b;">Supprimer définitivement mon compte</button>
+        <a href="{% url 'tableau_bord' %}" class="discret" style="margin-left:1rem;">Annuler</a>
+    </form>
+</div>
+{% endblock %}
