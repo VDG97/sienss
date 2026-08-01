@@ -5,104 +5,280 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block titre %}SIENSS{% endblock %} — Suivi nutritionnel intelligent</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --vert: #2f9e6f;
-            --vert-clair: #e6f5ee;
-            --bleu: #2f6fa8;
-            --bleu-clair: #eaf2fa;
-            --rouge: #c0392b;
-            --gris-texte: #3a3a3a;
-            --gris-clair: #f7f7f7;
+            /* Palette : vert profond (santé, sécurité), bleu nuit (confiance, sérieux
+               clinique), sable chaud (accueillant, non clinique). Ambre et rouge
+               réservés strictement aux niveaux d'alerte. */
+            --vert: #1E7A5F;
+            --vert-doux: #E7F4EE;
+            --bleu-nuit: #16293A;
+            --bleu-nuit-clair: #1F3C52;
+            --bleu-doux: #EAF1F6;
+            --sable: #FAF8F4;
+            --rouge: #B3392B;
+            --rouge-doux: #FBEAE7;
+            --ambre: #92650B;
+            --ambre-doux: #FBF1DE;
+            --texte: #1D2624;
+            --texte-doux: #5C6864;
+            --bordure: #E4DFD5;
         }
         * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body {
-            font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Inter', -apple-system, "Segoe UI", Roboto, sans-serif;
             margin: 0;
-            background: var(--gris-clair);
-            color: var(--gris-texte);
+            background: var(--sable);
+            color: var(--texte);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
         }
+        h1, h2, .logo {
+            font-family: 'Fraunces', Georgia, serif;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        /* ---------- En-tête ---------- */
         header {
-            background: white;
-            border-bottom: 1px solid #e0e0e0;
-            padding: 0.9rem 1.5rem;
+            background: var(--bleu-nuit);
+            padding: 0 1.25rem;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 1px 0 rgba(255,255,255,0.06);
+        }
+        .barre-nav {
+            max-width: 900px;
+            margin: 0 auto;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            height: 3.75rem;
         }
-        header .logo { font-weight: 700; color: var(--vert); font-size: 1.2rem; text-decoration: none; }
-        nav a {
-            margin-left: 1.2rem;
-            color: var(--gris-texte);
+        .logo {
+            color: #fff;
+            font-size: 1.3rem;
             text-decoration: none;
-            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
         }
-        nav a:hover { color: var(--vert); }
-        main {
-            max-width: 720px;
-            margin: 2rem auto;
-            padding: 0 1.2rem;
-        }
-        .carte {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.2rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-        }
-        h1 { font-size: 1.5rem; }
-        h2 { font-size: 1.15rem; color: var(--bleu); }
-        .bouton {
-            display: inline-block;
+        .logo::before {
+            content: "";
+            width: 0.6rem; height: 0.6rem;
+            border-radius: 50%;
             background: var(--vert);
-            color: white;
-            padding: 0.6rem 1.2rem;
+            display: inline-block;
+        }
+        nav.liens-desktop { display: flex; gap: 0.3rem; }
+        nav.liens-desktop a {
+            color: #CFE0DC;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            transition: background 0.15s, color 0.15s;
+            white-space: nowrap;
+        }
+        nav.liens-desktop a:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+        /* Menu mobile — bascule en CSS pur, aucun JS nécessaire */
+        #bascule-menu { display: none; }
+        .bouton-menu {
+            display: none;
+            width: 2.25rem; height: 2.25rem;
             border-radius: 8px;
             border: none;
-            text-decoration: none;
-            font-size: 0.95rem;
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            font-size: 1.1rem;
             cursor: pointer;
+            align-items: center;
+            justify-content: center;
         }
-        .bouton:hover { opacity: 0.9; }
-        .bouton.secondaire { background: var(--bleu); }
+        .menu-mobile {
+            display: none;
+            flex-direction: column;
+            gap: 0.15rem;
+            padding: 0.5rem 0 1rem;
+        }
+        .menu-mobile a {
+            color: #E9F0ED;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.7rem 0.5rem;
+            border-radius: 8px;
+        }
+        .menu-mobile a:active { background: rgba(255,255,255,0.08); }
+
+        @media (max-width: 720px) {
+            nav.liens-desktop { display: none; }
+            .bouton-menu { display: flex; }
+            #bascule-menu:checked ~ .menu-mobile { display: flex; }
+        }
+
+        /* ---------- Structure ---------- */
+        main {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 1.75rem 1.1rem 4rem;
+        }
+        .carte {
+            background: #fff;
+            border: 1px solid var(--bordure);
+            border-radius: 16px;
+            padding: 1.6rem;
+            margin-bottom: 1.1rem;
+            box-shadow: 0 1px 2px rgba(22,41,58,0.04);
+        }
+        h1 { font-size: 1.5rem; margin: 0 0 0.3rem; color: var(--bleu-nuit); }
+        h2 { font-size: 1.05rem; margin: 0 0 0.8rem; color: var(--vert); }
+
+        /* ---------- Boutons ---------- */
+        .bouton {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            background: var(--vert);
+            color: white;
+            padding: 0.65rem 1.35rem;
+            border-radius: 999px;
+            border: none;
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.15s;
+        }
+        .bouton:hover { box-shadow: 0 3px 10px rgba(30,122,95,0.28); transform: translateY(-1px); }
+        .bouton:active { transform: translateY(0); }
+        .bouton.secondaire { background: var(--bleu-nuit-clair); }
+        .bouton.discret-bouton { background: #F0EDE4; color: var(--texte); }
+
+        /* ---------- Formulaires ---------- */
         .champ { margin-bottom: 1rem; }
-        .champ label { display: block; margin-bottom: 0.3rem; font-size: 0.9rem; color: #555; }
+        .champ label {
+            display: block;
+            margin-bottom: 0.35rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--texte-doux);
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
         .champ input, .champ select, .champ textarea {
             width: 100%;
-            padding: 0.55rem;
-            border: 1px solid #d7d7d7;
-            border-radius: 6px;
+            padding: 0.62rem 0.75rem;
+            border: 1.5px solid var(--bordure);
+            border-radius: 10px;
             font-size: 0.95rem;
+            font-family: inherit;
+            background: #fff;
+            color: var(--texte);
+            transition: border-color 0.15s;
         }
+        .champ input:focus, .champ select:focus, .champ textarea:focus {
+            outline: none;
+            border-color: var(--vert);
+            box-shadow: 0 0 0 3px rgba(30,122,95,0.12);
+        }
+        .grille-champs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 1rem;
+        }
+        @media (max-width: 480px) {
+            .grille-champs { grid-template-columns: 1fr; }
+        }
+
+        /* ---------- Messages & alertes ---------- */
         .messages { list-style: none; padding: 0; }
         .messages li {
-            padding: 0.7rem 1rem;
-            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
             margin-bottom: 0.8rem;
             font-size: 0.9rem;
+            font-weight: 500;
         }
-        .messages .success { background: var(--vert-clair); color: #1d6b4c; }
-        .messages .warning { background: #fdf3e3; color: #8a5a00; }
-        .messages .error { background: #fbe8e6; color: var(--rouge); }
+        .messages .success { background: var(--vert-doux); color: #12523E; }
+        .messages .warning { background: var(--ambre-doux); color: var(--ambre); }
+        .messages .error { background: var(--rouge-doux); color: var(--rouge); }
+
         .alerte {
             padding: 0.9rem 1rem;
-            border-radius: 8px;
+            border-radius: 10px;
             margin-bottom: 0.7rem;
             font-size: 0.9rem;
         }
-        .alerte.risque_eleve { background: #fbe8e6; border-left: 4px solid var(--rouge); }
-        .alerte.vigilance { background: #fdf3e3; border-left: 4px solid #d99a00; }
-        .alerte.info { background: var(--vert-clair); border-left: 4px solid var(--vert); }
-        .stat { display: inline-block; margin-right: 2rem; }
-        .stat .valeur { font-size: 1.6rem; font-weight: 700; color: var(--bleu); }
-        .stat .label { font-size: 0.85rem; color: #777; }
-        .discret { color: #888; font-size: 0.85rem; }
+        .alerte.risque_eleve { background: var(--rouge-doux); border-left: 4px solid var(--rouge); }
+        .alerte.vigilance { background: var(--ambre-doux); border-left: 4px solid var(--ambre); }
+        .alerte.info { background: var(--vert-doux); border-left: 4px solid var(--vert); }
+
+        /* ---------- Stats & anneau de score (élément signature) ---------- */
+        .stats-ligne { display: flex; flex-wrap: wrap; gap: 1.6rem; margin: 0.9rem 0 1.2rem; }
+        .stat .valeur { font-family: 'Fraunces', serif; font-size: 1.9rem; font-weight: 600; color: var(--bleu-nuit); line-height: 1; }
+        .stat .label { font-size: 0.8rem; color: var(--texte-doux); margin-top: 0.25rem; }
+
+        .anneau-score { display: inline-flex; align-items: center; gap: 0.7rem; }
+        .anneau-score .cercle {
+            --pct: 0;
+            position: relative;
+            width: 3.4rem; height: 3.4rem;
+            border-radius: 50%;
+            background: conic-gradient(var(--couleur-anneau, var(--vert)) calc(var(--pct) * 1%), #ECE7DA 0);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .anneau-score .cercle::before {
+            content: "";
+            position: absolute;
+            inset: 0.42rem;
+            border-radius: 50%;
+            background: #fff;
+        }
+        .anneau-score .valeur-anneau {
+            position: relative; z-index: 1;
+            font-family: 'Fraunces', serif; font-size: 1rem; font-weight: 600;
+        }
+        .anneau-score .label-anneau { font-size: 0.78rem; color: var(--texte-doux); }
+
+        .discret { color: var(--texte-doux); font-size: 0.85rem; }
+        a { color: var(--vert); }
     </style>
 </head>
 <body>
 <header>
-    <a href="{% url 'tableau_bord' %}" class="logo">SIENSS</a>
-    <nav>
+    <div class="barre-nav">
+        <a href="{% url 'tableau_bord' %}" class="logo">SIENSS</a>
+
+        {% if user.is_authenticated %}
+        <nav class="liens-desktop">
+            <a href="{% url 'tableau_bord' %}">Tableau de bord</a>
+            <a href="{% url 'ajouter_repas' %}">Ajouter un repas</a>
+            <a href="{% url 'historique' %}">Historique</a>
+            <a href="{% url 'informations_medicales' %}">Infos médicales</a>
+            <a href="{% url 'profil_sante' %}">Profil</a>
+            <a href="{% url 'deconnexion' %}">Déconnexion</a>
+        </nav>
+        {% else %}
+        <nav class="liens-desktop">
+            <a href="{% url 'connexion' %}">Connexion</a>
+            <a href="{% url 'inscription' %}">Créer un compte</a>
+        </nav>
+        {% endif %}
+
+        <label for="bascule-menu" class="bouton-menu" aria-label="Menu">☰</label>
+    </div>
+    <input type="checkbox" id="bascule-menu">
+    <div class="menu-mobile">
         {% if user.is_authenticated %}
             <a href="{% url 'tableau_bord' %}">Tableau de bord</a>
             <a href="{% url 'ajouter_repas' %}">Ajouter un repas</a>
@@ -114,7 +290,7 @@
             <a href="{% url 'connexion' %}">Connexion</a>
             <a href="{% url 'inscription' %}">Créer un compte</a>
         {% endif %}
-    </nav>
+    </div>
 </header>
 <main>
     {% if messages %}

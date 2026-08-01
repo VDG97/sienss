@@ -3,40 +3,51 @@
 {% block contenu %}
 <div class="carte">
     <h1>Bonjour, {{ user.get_full_name|default:user.username }} 👋</h1>
-    <div class="stat">
-        <div class="valeur">{{ repas_aujourdhui.count }}</div>
-        <div class="label">repas aujourd'hui</div>
+
+    <div class="stats-ligne">
+        <div class="stat">
+            <div class="valeur">{{ repas_aujourdhui.count }}</div>
+            <div class="label">repas aujourd'hui</div>
+        </div>
+        <div class="stat">
+            <div class="valeur">{{ nb_repas_semaine }}</div>
+            <div class="label">repas cette semaine</div>
+        </div>
+        {% if profil.imc %}
+        <div class="stat">
+            <div class="valeur">{{ profil.imc }}</div>
+            <div class="label">IMC estimé</div>
+        </div>
+        {% endif %}
     </div>
-    <div class="stat">
-        <div class="valeur">{{ nb_repas_semaine }}</div>
-        <div class="label">repas cette semaine</div>
-    </div>
-    {% if profil.imc %}
-    <div class="stat">
-        <div class="valeur">{{ profil.imc }}</div>
-        <div class="label">IMC estimé</div>
+
+    {% if score_alimentaire or score_fiabilite %}
+    <div class="stats-ligne" style="margin-top:0;">
+        {% if score_alimentaire %}
+        <div class="anneau-score">
+            <div class="cercle" style="--pct:{{ score_alimentaire.valeur|floatformat:0 }}; --couleur-anneau:var(--vert);">
+                <span class="valeur-anneau">{{ score_alimentaire.valeur|floatformat:0 }}</span>
+            </div>
+            <div class="label-anneau">Score<br>alimentaire</div>
+        </div>
+        {% endif %}
+        {% if score_fiabilite %}
+        <div class="anneau-score">
+            <div class="cercle" style="--pct:{{ score_fiabilite.valeur|floatformat:0 }}; --couleur-anneau:var(--bleu-nuit-clair);">
+                <span class="valeur-anneau">{{ score_fiabilite.valeur|floatformat:0 }}</span>
+            </div>
+            <div class="label-anneau">Fiabilité de<br>l'analyse</div>
+        </div>
+        {% endif %}
     </div>
     {% endif %}
-    {% if score_alimentaire %}
-    <div class="stat">
-        <div class="valeur">{{ score_alimentaire.valeur|floatformat:0 }}/100</div>
-        <div class="label">Score alimentaire (7j)</div>
-    </div>
-    {% endif %}
-    {% if score_fiabilite %}
-    <div class="stat">
-        <div class="valeur">{{ score_fiabilite.valeur|floatformat:0 }}%</div>
-        <div class="label">Fiabilité de l'analyse</div>
-    </div>
-    {% endif %}
-    <div style="margin-top:1.2rem;">
-        <a href="{% url 'ajouter_repas' %}" class="bouton">+ Ajouter un repas</a>
-    </div>
+
+    <a href="{% url 'ajouter_repas' %}" class="bouton">+ Ajouter un repas</a>
 </div>
 
 {% if score_fiabilite and score_fiabilite.valeur < 50 %}
-<div class="carte" style="border-left:4px solid #d99a00;">
-    <p class="discret" style="margin:0;">⚠️ La fiabilité de vos analyses est encore faible ({{ score_fiabilite.valeur|floatformat:0 }}%) — enregistrez vos repas plus régulièrement pour des résultats plus précis.</p>
+<div class="carte" style="border-left:4px solid var(--ambre); padding:1rem 1.3rem;">
+    <p class="discret" style="margin:0;">⚠️ La fiabilité de vos analyses est encore faible — enregistrez vos repas plus régulièrement pour des résultats plus précis.</p>
 </div>
 {% endif %}
 

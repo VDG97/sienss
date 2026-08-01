@@ -3,22 +3,59 @@
 {% block contenu %}
 <div class="carte">
     <h1>Mon profil de santé</h1>
-    <p class="discret">Ces informations permettent au moteur d'analyse de personnaliser vos alertes (allergies, pathologies et traitements se gèrent séparément, via l'administrateur pour l'instant en V1).</p>
+    <p class="discret">Ces informations permettent au moteur d'analyse de personnaliser vos alertes. Les allergies, pathologies et traitements se gèrent dans <a href="{% url 'informations_medicales' %}">Infos médicales</a>.</p>
     <form method="post">
         {% csrf_token %}
-        {% for field in form %}
+
+        <div class="grille-champs">
             <div class="champ">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% for error in field.errors %}<p style="color:#c0392b;font-size:0.85rem;">{{ error }}</p>{% endfor %}
+                <label for="{{ form.taille_cm.id_for_label }}">{{ form.taille_cm.label }}</label>
+                {{ form.taille_cm }}
+                {% for error in form.taille_cm.errors %}<p style="color:var(--rouge);font-size:0.85rem;">{{ error }}</p>{% endfor %}
             </div>
-        {% endfor %}
-        <button type="submit" class="bouton">Enregistrer mon profil</button>
+            <div class="champ">
+                <label for="{{ form.poids_actuel_kg.id_for_label }}">{{ form.poids_actuel_kg.label }}</label>
+                {{ form.poids_actuel_kg }}
+                {% for error in form.poids_actuel_kg.errors %}<p style="color:var(--rouge);font-size:0.85rem;">{{ error }}</p>{% endfor %}
+            </div>
+        </div>
+
+        <div class="grille-champs">
+            <div class="champ">
+                <label for="{{ form.poids_cible_kg.id_for_label }}">{{ form.poids_cible_kg.label }}</label>
+                {{ form.poids_cible_kg }}
+                {% for error in form.poids_cible_kg.errors %}<p style="color:var(--rouge);font-size:0.85rem;">{{ error }}</p>{% endfor %}
+            </div>
+            <div class="champ">
+                <label for="{{ form.niveau_activite_physique.id_for_label }}">{{ form.niveau_activite_physique.label }}</label>
+                {{ form.niveau_activite_physique }}
+                {% for error in form.niveau_activite_physique.errors %}<p style="color:var(--rouge);font-size:0.85rem;">{{ error }}</p>{% endfor %}
+            </div>
+        </div>
+
+        <div class="champ">
+            <label for="{{ form.objectif_nutritionnel.id_for_label }}">{{ form.objectif_nutritionnel.label }}</label>
+            {{ form.objectif_nutritionnel }}
+            {% for error in form.objectif_nutritionnel.errors %}<p style="color:var(--rouge);font-size:0.85rem;">{{ error }}</p>{% endfor %}
+        </div>
+
+        <div class="grille-champs">
+            <div class="champ" style="display:flex; align-items:center; gap:0.5rem;">
+                {{ form.grossesse }}
+                <label for="{{ form.grossesse.id_for_label }}" style="margin:0; text-transform:none; font-weight:500; font-size:0.9rem;">{{ form.grossesse.label }}</label>
+            </div>
+            <div class="champ" style="display:flex; align-items:center; gap:0.5rem;">
+                {{ form.allaitement }}
+                <label for="{{ form.allaitement.id_for_label }}" style="margin:0; text-transform:none; font-weight:500; font-size:0.9rem;">{{ form.allaitement.label }}</label>
+            </div>
+        </div>
+
+        <button type="submit" class="bouton" style="margin-top:0.4rem;">Enregistrer mon profil</button>
     </form>
 </div>
 <div class="carte">
     <p class="discret">
-        <a href="{% url 'supprimer_compte' %}" style="color:#c0392b;">Supprimer mon compte définitivement</a>
+        <a href="{% url 'supprimer_compte' %}" style="color:var(--rouge);">Supprimer mon compte définitivement</a>
     </p>
 </div>
 {% endblock %}
