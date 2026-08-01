@@ -88,6 +88,32 @@
         }
         nav.liens-desktop a:hover { background: rgba(255,255,255,0.08); color: #fff; }
 
+        /* Le bouton de déconnexion est un vrai <button> dans un <form> (POST
+           obligatoire depuis Django 5), stylé pour ressembler à un lien normal. */
+        .form-deconnexion { display: inline; margin: 0; }
+        .form-deconnexion button {
+            font: inherit;
+            color: #CFE0DC;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: background 0.15s, color 0.15s;
+        }
+        .form-deconnexion button:hover { background: rgba(255,255,255,0.08); color: #fff; }
+        .menu-mobile .form-deconnexion { display: block; }
+        .menu-mobile .form-deconnexion button {
+            width: 100%;
+            text-align: left;
+            color: #E9F0ED;
+            font-size: 1rem;
+            padding: 0.7rem 0.5rem;
+        }
+        .menu-mobile .form-deconnexion button:active { background: rgba(255,255,255,0.08); }
+
         /* Menu mobile — bascule en CSS pur, aucun JS nécessaire */
         #bascule-menu { display: none; }
         .bouton-menu {
@@ -266,7 +292,10 @@
             <a href="{% url 'historique' %}">Historique</a>
             <a href="{% url 'informations_medicales' %}">Infos médicales</a>
             <a href="{% url 'profil_sante' %}">Profil</a>
-            <a href="{% url 'deconnexion' %}">Déconnexion</a>
+            <form method="post" action="{% url 'deconnexion' %}" class="form-deconnexion">
+                {% csrf_token %}
+                <button type="submit">Déconnexion</button>
+            </form>
         </nav>
         {% else %}
         <nav class="liens-desktop">
@@ -285,7 +314,10 @@
             <a href="{% url 'historique' %}">Historique</a>
             <a href="{% url 'informations_medicales' %}">Infos médicales</a>
             <a href="{% url 'profil_sante' %}">Profil</a>
-            <a href="{% url 'deconnexion' %}">Déconnexion</a>
+            <form method="post" action="{% url 'deconnexion' %}" class="form-deconnexion">
+                {% csrf_token %}
+                <button type="submit">Déconnexion</button>
+            </form>
         {% else %}
             <a href="{% url 'connexion' %}">Connexion</a>
             <a href="{% url 'inscription' %}">Créer un compte</a>
