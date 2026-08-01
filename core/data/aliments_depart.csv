@@ -26,3 +26,25 @@ Choux verts cuits,,Légume,International,100,25,1.3,5.8,0.1,2.5,20,2.2,0,170,108
 Pamplemousse,,Fruit,International,150,32,0.7,8,0.1,1,0,7,0,150,0,25,,eleve,Table de composition générique
 Bonbon réglisse,,Confiserie,International,20,340,2,90,0.5,1,90,55,0.1,50,0,70,,faible,Estimation
 Épinards cuits,,Légume,International,100,23,2.9,3.6,0.4,2.2,70,0.4,0.1,466,483,,,eleve,Table de composition générique
+Couscous cuit,,Céréale,International/Maghreb,180,112,3.8,23,0.2,1.4,5,0.1,0.02,58,0,65,gluten,eleve,Table de composition générique
+Spaghetti/pâtes cuites,,Céréale,International,200,131,5,25,1.1,1.8,1,1,0.03,44,0,50,gluten,eleve,Table de composition générique
+Pizza (margherita),,Plat composé,International,150,266,11,33,10,2.3,598,3.6,4.5,172,1.7,60,gluten;lactose,faible,Estimation à valider
+Riz frit (riz sauté),,Céréale,International,200,163,3.5,25,5.5,1.2,380,0.5,1,60,0,70,,faible,Estimation à valider
+Œuf au plat/dur,,Protéine,International,50,155,13,1.1,11,0,124,1.1,3.3,126,0.3,,œuf,eleve,Table de composition générique
+Pain beignet (beignet local),Beignet,Céréale/friture,Bénin,60,280,4.5,32,15,1.2,180,3,4,90,0,,gluten,faible,Estimation à valider
+Bouillie de mil,Bouillie,Céréale,Bénin,250,95,2.2,19,1,1.5,10,3,0.2,110,0,55,,faible,Estimation à valider
+Bouillie de maïs,Bouillie,Céréale,Bénin,250,100,2.3,20,1,1.2,8,3,0.2,100,0,60,,faible,Estimation à valider
+Akpan,Akpan,Céréale fermentée,Bénin,200,105,2,22,0.8,1,15,2,0.15,95,0,55,,faible,Estimation à valider
+Wagashi (fromage local),Wagashi,Produit laitier,Bénin,80,220,17,2,16,0,300,2,10,120,0,,lactose,faible,Estimation à valider
+Sardines à l'huile,,Poisson,International,80,208,20,0,14,0,350,0,3.5,300,0,,poisson,eleve,Table de composition générique
+Yaourt nature,,Produit laitier,International,125,61,3.5,4.7,3.3,0,46,4.7,2.1,155,0,35,lactose,eleve,Table de composition générique
+Fromage type gouda,,Produit laitier,International,30,356,25,2.2,28,0,819,2.2,18,150,0,,lactose,eleve,Table de composition générique
+Frites de pomme de terre,,Féculent frit,International,150,312,3.4,41,15,3.8,210,0.3,2,570,2,68,,eleve,Table de composition générique
+Salade verte (laitue),,Légume,International,60,15,1.4,2.9,0.2,1.3,28,0.8,0,194,126,,,eleve,Table de composition générique
+Jus d'orange (pressé),,Boisson,International,200,45,0.7,10.4,0.2,0.2,1,8.4,0,200,0,50,,eleve,Table de composition générique
+Café noir sucré,,Boisson,International,200,16,0.2,4,0,0,5,4,0,60,0,,,moyen,Table de composition générique
+Thé sucré,,Boisson,International,200,16,0,4,0,0,3,4,0,20,0,,,moyen,Table de composition générique
+Biscuits secs,,Confiserie,International,40,190,2.8,28,7.5,1,140,10,3.5,60,0,65,gluten,moyen,Table de composition générique
+Chocolat au lait,,Confiserie,International,25,135,2,15,7.5,0.9,20,14,4.5,90,0,45,lactose,eleve,Table de composition générique
+Glace (crème glacée),,Confiserie,International,100,207,3.5,24,11,0.7,80,21,7,199,0,60,lactose,eleve,Table de composition générique
+Poulet frit,,Viande frite,International,150,290,24,10,18,0.4,450,0.3,4.5,220,0,,,faible,Estimation à valider

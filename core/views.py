@@ -1,4 +1,5 @@
 from datetime import timedelta
+from decimal import Decimal
 
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -89,13 +90,11 @@ def tableau_bord(request):
 def ajouter_repas(request):
     if request.method == "POST":
         repas_form = RepasForm(request.POST)
-        aliment_formset = RepasAlimentFormSet(
-            request.POST, queryset=RepasAliment.objects.none(), prefix="aliments"
-        )
+        aliment_formset = RepasAlimentFormSet(request.POST, prefix="aliments")
         if repas_form.is_valid() and aliment_formset.is_valid():
             lignes_remplies = [
                 f for f in aliment_formset.forms
-                if f.cleaned_data.get("aliment") and f.cleaned_data.get("quantite_g")
+                if f.cleaned_data.get("aliment") and f.cleaned_data.get("portion")
             ]
             if not lignes_remplies:
                 messages.error(request, "Ajoutez au moins un aliment à ce repas.")
@@ -105,10 +104,12 @@ def ajouter_repas(request):
                 repas.save()
 
                 for f in lignes_remplies:
+                    aliment = f.cleaned_data["aliment"]
+                    multiplicateur = Decimal(f.cleaned_data["portion"])
+                    portion_reference = aliment.portion_standard_g or Decimal("100")
+                    quantite_g = (portion_reference * multiplicateur).quantize(Decimal("0.1"))
                     RepasAliment.objects.create(
-                        repas=repas,
-                        aliment=f.cleaned_data["aliment"],
-                        quantite_g=f.cleaned_data["quantite_g"],
+                        repas=repas, aliment=aliment, quantite_g=quantite_g,
                     )
 
                 alertes = analyser_repas(repas)
@@ -121,7 +122,7 @@ def ajouter_repas(request):
                 return redirect("tableau_bord")
     else:
         repas_form = RepasForm(initial={"date": timezone.localdate()})
-        aliment_formset = RepasAlimentFormSet(queryset=RepasAliment.objects.none(), prefix="aliments")
+        aliment_formset = RepasAlimentFormSet(prefix="aliments")
 
     return render(request, "core/ajouter_repas.html", {
         "repas_form": repas_form,

@@ -348,11 +348,11 @@ class EcransTests(TestCase):
             "date": str(date.today()), "heure": "12:30", "type_repas": "dejeuner", "commentaire": "",
             "aliments-TOTAL_FORMS": "8", "aliments-INITIAL_FORMS": "0",
             "aliments-MIN_NUM_FORMS": "0", "aliments-MAX_NUM_FORMS": "1000",
-            "aliments-0-aliment": str(self.sauce_arachide.id), "aliments-0-quantite_g": "100",
+            "aliments-0-aliment": str(self.sauce_arachide.id), "aliments-0-portion": "1",
         }
         for i in range(1, 8):
             data[f"aliments-{i}-aliment"] = ""
-            data[f"aliments-{i}-quantite_g"] = ""
+            data[f"aliments-{i}-portion"] = ""
         resp = self.client.post(reverse("ajouter_repas"), data, follow=True)
 
         u = Utilisateur.objects.get(username="parcours_complet")
@@ -378,7 +378,7 @@ class EcransTests(TestCase):
         }
         for i in range(8):
             data[f"aliments-{i}-aliment"] = ""
-            data[f"aliments-{i}-quantite_g"] = ""
+            data[f"aliments-{i}-portion"] = ""
 
         resp = self.client.post(reverse("ajouter_repas"), data)
         self.assertEqual(resp.status_code, 200)  # pas de redirection = pas d'enregistrement

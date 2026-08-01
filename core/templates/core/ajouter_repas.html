@@ -3,7 +3,7 @@
 {% block contenu %}
 <div class="carte">
     <h1>Ajouter un repas</h1>
-    <p class="discret">Ajoutez un ou plusieurs aliments à ce repas. Laissez les lignes non utilisées vides.</p>
+    <p class="discret">Ajoutez un ou plusieurs aliments et choisissez une taille de portion approximative (petite / normale / grande) — pas besoin de peser vos aliments. Laissez les lignes non utilisées vides.</p>
     <form method="post">
         {% csrf_token %}
         <h2 style="font-size:1rem;">Le repas</h2>
@@ -29,10 +29,9 @@
                     {% for error in form.aliment.errors %}<p style="color:#c0392b;font-size:0.8rem;">{{ error }}</p>{% endfor %}
                 </div>
                 <div style="flex:1;">
-                    {{ form.quantite_g }}
-                    {% for error in form.quantite_g.errors %}<p style="color:#c0392b;font-size:0.8rem;">{{ error }}</p>{% endfor %}
+                    {{ form.portion }}
+                    {% for error in form.portion.errors %}<p style="color:#c0392b;font-size:0.8rem;">{{ error }}</p>{% endfor %}
                 </div>
-                {{ form.id }}
             </div>
         {% endfor %}
 

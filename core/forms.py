@@ -62,40 +62,49 @@ class RepasForm(forms.ModelForm):
         }
 
 
-class RepasAlimentForm(forms.ModelForm):
+class RepasAlimentForm(forms.Form):
+    """
+    Formulaire volontairement non lié directement au modèle : on ne demande
+    plus un poids en grammes (irréaliste pour un utilisateur du grand public),
+    mais une taille de portion relative à la portion standard de l'aliment.
+    La conversion en grammes se fait dans la vue à partir de
+    Aliment.portion_standard_g (voir Chapitre 3.3 : "portion" plutôt que poids
+    exact — corrigé suite aux retours utilisateurs).
+    """
+    PORTION_CHOIX = [
+        ("", "—"),
+        ("0.5", "Petite portion"),
+        ("1", "Portion normale"),
+        ("1.5", "Grande portion"),
+        ("2", "Très grande portion"),
+    ]
+
     aliment = forms.ModelChoiceField(
         queryset=Aliment.objects.all().order_by("nom"),
         label="Aliment",
         required=False,
         widget=forms.Select(attrs={"class": "aliment-select"}),
     )
-
-    class Meta:
-        model = RepasAliment
-        fields = ["aliment", "quantite_g"]
-        labels = {"quantite_g": "Quantité (g)"}
+    portion = forms.ChoiceField(
+        choices=PORTION_CHOIX, label="Quantité", required=False,
+    )
 
     def clean(self):
-        """Une ligne vide (ni aliment ni quantité) est acceptée : elle sera ignorée
+        """Une ligne vide (ni aliment ni portion) est acceptée : elle sera ignorée
         par le formset plutôt que de bloquer l'enregistrement du repas."""
         cleaned = super().clean()
         aliment = cleaned.get("aliment")
-        quantite = cleaned.get("quantite_g")
-        if aliment and not quantite:
-            self.add_error("quantite_g", "Indiquez une quantité pour cet aliment.")
-        if quantite and not aliment:
-            self.add_error("aliment", "Sélectionnez un aliment pour cette quantité.")
+        portion = cleaned.get("portion")
+        if aliment and not portion:
+            self.add_error("portion", "Choisissez une taille de portion pour cet aliment.")
+        if portion and not aliment:
+            self.add_error("aliment", "Sélectionnez un aliment pour cette portion.")
         return cleaned
 
 
 # Formset : jusqu'à 8 aliments par repas dans la V1 (pas de suppression dynamique en JS
 # pour rester simple ; l'utilisateur laisse les lignes en trop vides).
-RepasAlimentFormSet = forms.modelformset_factory(
-    RepasAliment,
-    form=RepasAlimentForm,
-    extra=8,
-    can_delete=False,
-)
+RepasAlimentFormSet = forms.formset_factory(RepasAlimentForm, extra=8)
 
 
 class AllergieForm(forms.ModelForm):
