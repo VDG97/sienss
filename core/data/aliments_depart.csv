@@ -48,3 +48,74 @@ Biscuits secs,,Confiserie,International,40,190,2.8,28,7.5,1,140,10,3.5,60,0,65,g
 Chocolat au lait,,Confiserie,International,25,135,2,15,7.5,0.9,20,14,4.5,90,0,45,lactose,eleve,Table de composition générique
 Glace (crème glacée),,Confiserie,International,100,207,3.5,24,11,0.7,80,21,7,199,0,60,lactose,eleve,Table de composition générique
 Poulet frit,,Viande frite,International,150,290,24,10,18,0.4,450,0.3,4.5,220,0,,,faible,Estimation à valider
+Pomme de terre bouillie,,Tubercule,International,150,87,1.9,20,0.1,1.8,6,0.9,0,379,1.9,78,,moyen,Table de composition générique
+Patate douce bouillie,,Tubercule,International/Bénin,150,86,1.6,20,0.1,3,55,4.2,0,337,1.8,63,,moyen,Table de composition générique
+Taro (macabo) bouilli,Taro,Tubercule,Bénin,150,112,1.5,26,0.1,4.1,11,0.4,0,591,1,55,,faible,Estimation à valider
+Quinoa cuit,,Céréale,International,180,120,4.4,21,1.9,2.8,7,0.9,0.2,172,0,53,,eleve,Table de composition générique
+Avoine cuite (flocons),,Céréale,International,200,71,2.5,12,1.4,1.7,4,0.3,0.2,70,0,55,,moyen,Table de composition générique
+Vermicelles cuits,,Céréale,International,180,109,2,25,0.2,1,3,0.3,0,12,0,55,gluten,moyen,Table de composition générique
+Croissant,,Céréale/viennoiserie,International,60,406,8.2,45,21,2.6,490,8,11.7,120,3,67,gluten;lactose,eleve,Table de composition générique
+Brioche,,Céréale,International,60,375,8,50,15,2,350,15,7,130,0,70,gluten;lactose;œuf,moyen,Table de composition générique
+Biscotte,,Céréale,International,20,411,10,74,8,3.5,500,5,1.5,150,0,70,gluten,moyen,Table de composition générique
+Alloco (banane plantain frite),Alloco,Fruit/féculent frit,Côte d'Ivoire/Bénin,150,210,1.3,40,7,2.8,6,20,1,550,0.8,70,,faible,Estimation à valider
+Akara (beignet de haricot),Akara,Légumineuse frite,Bénin/Nigeria,80,230,8,15,15,3,200,1,2.5,250,0,,,faible,Estimation à valider
+Moin-moin (pâté de haricot vapeur),Moin-moin,Légumineuse,Bénin/Nigeria,150,170,9,15,8,4,250,1,1.5,300,0,,,faible,Estimation à valider
+Kluiklui (beignet d'arachide),Kluiklui,Confiserie/arachide,Bénin,40,520,18,30,38,5,150,5,6,400,0,,arachide,faible,Estimation à valider
+Amiwo (pâte de maïs à la tomate),Amiwo,Céréale,Bénin,250,130,2.5,26,2,1.5,300,2,0.3,150,5,,,faible,Estimation à valider
+Sauce feuilles (moyo/gboman),Moyo,Sauce/légume,Bénin,150,70,3,6,4,3,350,1,0.6,300,200,,,faible,Estimation à valider
+Foufou d'igname,Foufou,Tubercule pilé,Bénin,200,130,1.6,30,0.2,2,10,1,0,450,0,70,,faible,Estimation à valider
+Bissap (jus d'hibiscus),Bissap,Boisson,Bénin/Sénégal,200,45,0.1,11,0,0,3,10,0,30,0,,,faible,Estimation à valider
+Jus de gingembre,Kpayo,Boisson,Bénin,200,60,0.1,15,0,0.1,5,14,0,40,0,,,faible,Estimation à valider
+Dan wake (boulettes farine/haricot),Dan wake,Légumineuse,Bénin/Niger,150,140,6,20,3.5,3,150,1,0.5,200,0,,,faible,Estimation à valider
+Feuilles de patate douce cuites,,Légume,Bénin,100,35,3,6,0.3,3,30,1,0,350,200,,,faible,Estimation à valider
+"Crin-crin (corète potagère, sauce)",Crin-crin,Légume,Bénin,150,60,3,8,2,3,250,1,0.3,280,250,,,faible,Estimation à valider
+Escargot (achatine),,Protéine,Bénin,100,90,16,2,1.4,0,70,0,0.4,382,0,,,faible,Estimation à valider
+Cube bouillon (type Maggi),,Condiment,Bénin,5,250,8,15,15,0,20000,1,5,500,0,,,faible,"Estimation à valider — très riche en sodium, à utiliser avec prudence"
+Bœuf grillé,,Viande,International,120,250,26,0,17,0,65,0,6.5,320,1.6,,,moyen,Table de composition générique
+Mouton grillé,,Viande,International,120,294,25,0,21,0,72,0,9,310,5,,,moyen,Table de composition générique
+Crevettes cuites,,Fruit de mer,International,100,99,24,0.2,0.3,0,111,0,0.1,259,0,,crustaces,eleve,Table de composition générique
+Thon en boîte (à l'huile),,Poisson,International,80,198,25,0,10,0,300,0,1.8,250,0,,poisson,eleve,Table de composition générique
+Maquereau grillé,,Poisson,International,120,205,19,0,13.9,0,90,0,3.3,314,0,,poisson,moyen,Table de composition générique
+Œuf de caille,,Protéine,International,30,158,13,0.4,11,0,141,0.4,3.6,132,0.3,,œuf,moyen,Table de composition générique
+Foie de bœuf,,Abats,International,100,135,20,3.9,3.6,0,69,0,1.3,313,3.1,,,moyen,Table de composition générique
+Lentilles cuites,,Légumineuse,International,150,116,9,20,0.4,7.9,2,1.8,0.1,369,1.7,32,,eleve,Table de composition générique
+Pois chiches cuits,,Légumineuse,International,150,164,8.9,27,2.6,7.6,7,4.8,0.3,291,4,28,,eleve,Table de composition générique
+Haricots rouges cuits,,Légumineuse,International,150,127,8.7,22.8,0.5,6.4,2,0.3,0.1,403,0,24,,eleve,Table de composition générique
+Soja cuit (graines),,Légumineuse,International,150,173,16.6,9.9,9,6,2,3,1.3,515,0,,soja,eleve,Table de composition générique
+Carotte crue,,Légume,International,80,41,0.9,9.6,0.2,2.8,69,4.7,0,320,13.2,39,,eleve,Table de composition générique
+Concombre,,Légume,International,100,15,0.7,3.6,0.1,0.5,2,1.7,0,147,16.4,,,eleve,Table de composition générique
+Aubergine cuite,,Légume,International/Bénin,100,35,0.8,8.6,0.2,2.5,1,3.2,0,123,3.5,,,moyen,Table de composition générique
+Courgette cuite,,Légume,International,100,17,1.2,3.1,0.3,1,2,2.5,0.1,262,4.3,,,eleve,Table de composition générique
+Poivron,,Légume,International,80,31,1,6,0.3,2.1,4,4.2,0,211,7.4,,,eleve,Table de composition générique
+Chou-fleur cuit,,Légume,International,100,25,1.9,5,0.3,2,15,2,0,142,15.5,,,eleve,Table de composition générique
+Brocoli cuit,,Légume,International,100,35,2.4,7,0.4,3.3,41,1.4,0,293,141,,,eleve,Table de composition générique
+Gombo cuit,,Légume,Bénin,100,33,1.9,7.5,0.2,3.2,8,1.5,0,299,31.3,,,moyen,Table de composition générique
+Banane douce,,Fruit,International,120,89,1.1,23,0.3,2.6,1,12,0.1,358,0.5,51,,eleve,Table de composition générique
+Orange,,Fruit,International,130,47,0.9,12,0.1,2.4,0,9,0,181,0,43,,eleve,Table de composition générique
+Citron,,Fruit,International,50,29,1.1,9.3,0.3,2.8,2,2.5,0,138,0,,,eleve,Table de composition générique
+Papaye,,Fruit,Bénin,150,43,0.5,11,0.3,1.7,8,7.8,0,182,2.6,60,,eleve,Table de composition générique
+Pastèque,,Fruit,International,200,30,0.6,7.6,0.2,0.4,1,6.2,0,112,0.1,76,,eleve,Table de composition générique
+Avocat,,Fruit,International,100,160,2,8.5,14.7,6.7,7,0.7,2.1,485,21,15,,eleve,Table de composition générique
+Noix de coco (pulpe),,Fruit,Bénin,40,354,3.3,15,33,9,20,6,30,356,0.2,,fruits a coque,moyen,Table de composition générique
+Goyave,,Fruit,Bénin,100,68,2.6,14,1,5.4,2,8.9,0,417,2.6,,,eleve,Table de composition générique
+Corossol,,Fruit,Bénin,150,66,1,17,0.3,3.3,14,14,0,278,0,,,faible,Estimation à valider
+Raisin,,Fruit,International,100,69,0.7,18,0.2,0.9,2,16,0,191,14.6,59,,eleve,Table de composition générique
+Pomme,,Fruit,International,150,52,0.3,14,0.2,2.4,1,10,0,107,2.2,36,,eleve,Table de composition générique
+Datte séchée,,Fruit,International,30,282,2.5,75,0.4,8,2,63,0,696,2.7,42,,eleve,Table de composition générique
+Lait en poudre reconstitué,,Produit laitier,International,200,42,3.4,5,1,0,44,5,0.6,150,0,,lactose,moyen,Table de composition générique
+Lait concentré sucré,,Produit laitier,International,30,321,7.9,55,8.7,0,127,55,5.5,371,0,,lactose,eleve,Table de composition générique
+Beurre,,Matière grasse,International,10,717,0.9,0.1,81,0,11,0.1,51,24,7,,lactose,eleve,Table de composition générique
+Soda (type cola),,Boisson,International,330,42,0,10.6,0,0,4,10.6,0,0,0,63,,faible,Estimation à valider
+Bière,,Boisson,International,330,43,0.5,3.6,0,0,4,0,0,27,0,,,moyen,Table de composition générique
+Eau minérale,,Boisson,International,500,0,0,0,0,0,5,0,0,1,0,,,eleve,Table de composition générique
+Chips de pomme de terre,,Confiserie salée,International,50,536,7,53,35,4.4,525,0.2,3.1,1275,0,,,moyen,Table de composition générique
+Pop-corn nature,,Confiserie,International,30,375,11,78,4.5,15,8,0.9,0.6,329,0,,,moyen,Table de composition générique
+Cacahuètes grillées,,Fruit à coque,International/Bénin,40,585,24,21,50,8,18,4,7,705,0,,arachide,eleve,Table de composition générique
+Noix de cajou,,Fruit à coque,International,30,553,18,30,44,3.3,12,6,7.8,660,34,,fruits a coque,eleve,Table de composition générique
+Miel,,Sucre,International,20,304,0.3,82,0,0.2,4,82,0,52,0,61,,eleve,Table de composition générique
+Confiture,,Sucre,International,20,250,0.3,65,0,0.5,8,60,0,30,0,65,,moyen,Table de composition générique
+Sucre blanc,,Sucre,International,5,400,0,100,0,0,0,100,0,0,0,65,,eleve,Table de composition générique
+Huile d'arachide,,Matière grasse,Bénin,15,884,0,0,100,0,0,0,17,0,0,,arachide,eleve,Table de composition générique
+Huile de tournesol,,Matière grasse,International,15,884,0,0,100,0,0,0,10,1,5.4,,,eleve,Table de composition générique
+Mayonnaise,,Sauce,International,15,680,1,1,75,0,500,1,11,30,40,,œuf,moyen,Table de composition générique
+Ketchup,,Sauce,International,15,101,1.2,25,0.2,0.4,1040,21,0,380,0,,,moyen,Table de composition générique
