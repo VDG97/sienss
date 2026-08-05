@@ -6,8 +6,10 @@ from .models import (
     Alerte,
     AllergieUtilisateur,
     PathologieUtilisateur,
+    Professionnel,
     ProfilSante,
     RegleNutritionnelle,
+    RendezVous,
     Repas,
     RepasAliment,
     Score,
@@ -65,3 +67,20 @@ admin.site.register(AllergieUtilisateur)
 admin.site.register(PathologieUtilisateur)
 admin.site.register(TraitementUtilisateur)
 admin.site.register(RepasAliment)
+
+
+@admin.register(Professionnel)
+class ProfessionnelAdmin(admin.ModelAdmin):
+    list_display = ("utilisateur", "specialite", "verifie", "accepte_teleconsultation", "date_inscription")
+    list_filter = ("specialite", "verifie", "accepte_teleconsultation")
+    actions = ["verifier_les_professionnels"]
+
+    @admin.action(description="Marquer comme vérifié(s) — les rend visibles dans l'annuaire")
+    def verifier_les_professionnels(self, request, queryset):
+        queryset.update(verifie=True)
+
+
+@admin.register(RendezVous)
+class RendezVousAdmin(admin.ModelAdmin):
+    list_display = ("patient", "professionnel", "date_heure", "type_rendezvous", "statut")
+    list_filter = ("statut", "type_rendezvous")

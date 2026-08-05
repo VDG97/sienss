@@ -1,0 +1,31 @@
+{% extends "core/base.html" %}
+{% block titre %}Professionnels de santé{% endblock %}
+{% block contenu %}
+<div class="carte">
+    <h1>Trouver un professionnel</h1>
+    <p class="discret">Médecins, nutritionnistes, diététicien(ne)s et spécialistes disponibles en présentiel ou en téléconsultation.</p>
+
+    <div style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-top:0.8rem;">
+        <a href="{% url 'annuaire_professionnels' %}" class="bouton {% if not specialite_filtre %}{% else %}discret-bouton{% endif %}" style="font-size:0.82rem; padding:0.4rem 0.85rem;">Tous</a>
+        {% for valeur, libelle in specialites %}
+            <a href="?specialite={{ valeur }}" class="bouton {% if specialite_filtre == valeur %}{% else %}discret-bouton{% endif %}" style="font-size:0.82rem; padding:0.4rem 0.85rem;">{{ libelle }}</a>
+        {% endfor %}
+    </div>
+</div>
+
+{% for pro in professionnels %}
+<div class="carte">
+    <h2 style="margin-bottom:0.3rem;">{{ pro.utilisateur.get_full_name|default:pro.utilisateur.username }}</h2>
+    <p class="discret" style="margin:0 0 0.5rem;">{{ pro.libelle_specialite }}</p>
+    {% if pro.bio %}<p style="margin-bottom:0.7rem;">{{ pro.bio }}</p>{% endif %}
+    {% if pro.accepte_teleconsultation %}
+        <p class="discret" style="margin-bottom:0.8rem;">📹 Téléconsultation disponible</p>
+    {% endif %}
+    <a href="{% url 'demander_rendezvous' pro.id %}" class="bouton">Demander un rendez-vous</a>
+</div>
+{% empty %}
+<div class="carte">
+    <p class="discret">Aucun professionnel vérifié pour l'instant{% if specialite_filtre %} dans cette spécialité{% endif %}.</p>
+</div>
+{% endfor %}
+{% endblock %}

@@ -5,7 +5,9 @@ from .models import (
     Aliment,
     AllergieUtilisateur,
     PathologieUtilisateur,
+    Professionnel,
     ProfilSante,
+    RendezVous,
     Repas,
     RepasAliment,
     TraitementUtilisateur,
@@ -137,4 +139,32 @@ class TraitementForm(forms.ModelForm):
         widgets = {
             "date_debut": forms.DateInput(attrs={"type": "date"}),
             "date_fin": forms.DateInput(attrs={"type": "date"}),
+        }
+
+
+class ProfessionnelForm(forms.ModelForm):
+    class Meta:
+        model = Professionnel
+        fields = ["specialite", "specialite_autre", "bio", "numero_autorisation", "accepte_teleconsultation"]
+        labels = {
+            "specialite": "Spécialité",
+            "specialite_autre": "Précisez (si 'Autre spécialité')",
+            "bio": "Présentation courte",
+            "numero_autorisation": "Numéro d'autorisation d'exercer (optionnel)",
+            "accepte_teleconsultation": "J'accepte les téléconsultations vidéo",
+        }
+        widgets = {"bio": forms.Textarea(attrs={"rows": 3})}
+
+
+class RendezVousForm(forms.ModelForm):
+    class Meta:
+        model = RendezVous
+        fields = ["date_heure", "motif", "type_rendezvous"]
+        labels = {
+            "date_heure": "Date et heure souhaitées",
+            "motif": "Motif (optionnel)",
+            "type_rendezvous": "Type de rendez-vous",
+        }
+        widgets = {
+            "date_heure": forms.DateTimeInput(attrs={"type": "datetime-local"}),
         }

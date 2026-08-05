@@ -22,7 +22,7 @@ from core import views as core_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', core_views.tableau_bord, name='accueil'),
+    path('', core_views.accueil, name='accueil'),
     path('inscription/', core_views.inscription, name='inscription'),
     path('connexion/', core_views.ConnexionView.as_view(), name='connexion'),
     path('deconnexion/', auth_views.LogoutView.as_view(next_page='connexion'), name='deconnexion'),
@@ -59,4 +59,21 @@ urlpatterns = [
     path('repas/ajouter/', core_views.ajouter_repas, name='ajouter_repas'),
     path('aliments/rechercher/', core_views.rechercher_aliment, name='rechercher_aliment'),
     path('historique/', core_views.historique, name='historique'),
+    path('conseils/', core_views.conseils, name='conseils'),
+    path('professionnels/', core_views.annuaire_professionnels, name='annuaire_professionnels'),
+    path('professionnels/devenir/', core_views.devenir_professionnel, name='devenir_professionnel'),
+    path('professionnels/<uuid:professionnel_id>/rendez-vous/', core_views.demander_rendezvous, name='demander_rendezvous'),
+    path('rendez-vous/', core_views.mes_rendezvous, name='mes_rendezvous'),
+    path('rendez-vous/<uuid:pk>/confirmer/', core_views.confirmer_rendezvous, name='confirmer_rendezvous'),
+    path('rendez-vous/<uuid:pk>/annuler/', core_views.annuler_rendezvous, name='annuler_rendezvous'),
+    path('rendez-vous/<uuid:pk>/salle/', core_views.salle_teleconsultation, name='salle_teleconsultation'),
+
+    # Téléconsultation
+    path('professionnels/', core_views.annuaire_professionnels, name='annuaire_professionnels'),
+    path('professionnels/devenir/', core_views.devenir_professionnel, name='devenir_professionnel'),
+    path('professionnels/<uuid:pk>/rendez-vous/', core_views.demander_rendezvous, name='demander_rendezvous'),
+    path('rendez-vous/', core_views.mes_rendezvous, name='mes_rendezvous'),
+    path('rendez-vous/<uuid:pk>/confirmer/', core_views.confirmer_rendezvous, name='confirmer_rendezvous'),
+    path('rendez-vous/<uuid:pk>/annuler/', core_views.annuler_rendezvous, name='annuler_rendezvous'),
+    path('rendez-vous/<uuid:pk>/salle/', core_views.salle_teleconsultation, name='salle_teleconsultation'),
 ]

@@ -14,14 +14,23 @@ from .forms import (
     AllergieForm,
     InscriptionForm,
     PathologieForm,
+    ProfessionnelForm,
     ProfilSanteForm,
+    RendezVousForm,
     RepasAlimentFormSet,
     RepasForm,
     TraitementForm,
 )
-from .models import Alerte, Aliment, AllergieUtilisateur, PathologieUtilisateur, ProfilSante, Repas, RepasAliment, Score, TraitementUtilisateur
+from .models import Alerte, Aliment, AllergieUtilisateur, PathologieUtilisateur, Professionnel, ProfilSante, RendezVous, Repas, RepasAliment, Score, TraitementUtilisateur
+from .conseils import generer_conseils
 from .moteur_analyse import analyser_repas
 from .scores import mettre_a_jour_scores
+
+
+def accueil(request):
+    if request.user.is_authenticated:
+        return redirect("tableau_bord")
+    return render(request, "core/accueil.html")
 
 
 def inscription(request):
@@ -128,6 +137,11 @@ def ajouter_repas(request):
         "repas_form": repas_form,
         "aliment_formset": aliment_formset,
     })
+
+
+@login_required
+def conseils(request):
+    return render(request, "core/conseils.html", generer_conseils(request.user))
 
 
 @login_required
@@ -312,3 +326,270 @@ def supprimer_compte(request):
             messages.error(request, "Mot de passe incorrect — le compte n'a pas été supprimé.")
 
     return render(request, "core/supprimer_compte.html")
+
+
+# ---------------------------------------------------------------------------
+# Téléconsultation : annuaire de professionnels, rendez-vous, salle vidéo
+# ---------------------------------------------------------------------------
+@login_required
+def devenir_professionnel(request):
+    """Permet à n'importe quel utilisateur de créer/modifier sa fiche
+    professionnelle. Reste invisible dans l'annuaire tant qu'un administrateur
+    ne l'a pas vérifié (voir Professionnel.verifie, Chapitre 2 — rôle Administrateur)."""
+    profil_pro = getattr(request.user, "profil_professionnel", None)
+
+    if request.method == "POST":
+        form = ProfessionnelForm(request.POST, instance=profil_pro)
+        if form.is_valid():
+            pro = form.save(commit=False)
+            pro.utilisateur = request.user
+            pro.save()
+            if profil_pro is None:
+                messages.success(request, "Fiche professionnelle créée. Elle sera visible dans l'annuaire après vérification par un administrateur.")
+            else:
+                messages.success(request, "Fiche professionnelle mise à jour.")
+            return redirect("mes_rendezvous")
+    else:
+        form = ProfessionnelForm(instance=profil_pro)
+
+    return render(request, "core/devenir_professionnel.html", {
+        "form": form, "profil_pro": profil_pro,
+    })
+
+
+@login_required
+def annuaire_professionnels(request):
+    professionnels = Professionnel.objects.filter(verifie=True).select_related("utilisateur")
+    specialite_filtre = request.GET.get("specialite", "")
+    if specialite_filtre:
+        professionnels = professionnels.filter(specialite=specialite_filtre)
+
+    return render(request, "core/annuaire_professionnels.html", {
+        "professionnels": professionnels,
+        "specialites": Professionnel.Specialite.choices,
+        "specialite_filtre": specialite_filtre,
+    })
+
+
+@login_required
+def demander_rendezvous(request, pk):
+    professionnel = get_object_or_404(Professionnel, pk=pk, verifie=True)
+
+    if request.method == "POST":
+        form = RendezVousForm(request.POST)
+        if form.is_valid():
+            rdv = form.save(commit=False)
+            rdv.patient = request.user
+            rdv.professionnel = professionnel
+            rdv.save()
+            messages.success(request, "Demande de rendez-vous envoyée. Vous serez notifié(e) de la confirmation.")
+            return redirect("mes_rendezvous")
+    else:
+        form = RendezVousForm()
+
+    return render(request, "core/demander_rendezvous.html", {
+        "form": form, "professionnel": professionnel,
+    })
+
+
+@login_required
+def mes_rendezvous(request):
+    rendezvous_patient = request.user.rendezvous_en_tant_que_patient.select_related(
+        "professionnel__utilisateur"
+    )
+    profil_pro = getattr(request.user, "profil_professionnel", None)
+    rendezvous_recus = profil_pro.rendezvous_recus.select_related("patient") if profil_pro else None
+
+    return render(request, "core/mes_rendezvous.html", {
+        "rendezvous_patient": rendezvous_patient,
+        "rendezvous_recus": rendezvous_recus,
+        "profil_pro": profil_pro,
+    })
+
+
+@login_required
+def confirmer_rendezvous(request, pk):
+    profil_pro = getattr(request.user, "profil_professionnel", None)
+    rdv = get_object_or_404(RendezVous, pk=pk, professionnel=profil_pro)
+    rdv.statut = RendezVous.Statut.CONFIRME
+    rdv.save()
+    messages.success(request, "Rendez-vous confirmé.")
+    return redirect("mes_rendezvous")
+
+
+@login_required
+def annuler_rendezvous(request, pk):
+    profil_pro = getattr(request.user, "profil_professionnel", None)
+    rdv = get_object_or_404(
+        RendezVous, pk=pk
+    )
+    # Le patient OU le professionnel concerné peuvent annuler.
+    if rdv.patient_id != request.user.id and (not profil_pro or rdv.professionnel_id != profil_pro.id):
+        messages.error(request, "Vous n'êtes pas autorisé(e) à annuler ce rendez-vous.")
+        return redirect("mes_rendezvous")
+    rdv.statut = RendezVous.Statut.ANNULE
+    rdv.save()
+    messages.success(request, "Rendez-vous annulé.")
+    return redirect("mes_rendezvous")
+
+
+@login_required
+def salle_teleconsultation(request, pk):
+    rdv = get_object_or_404(RendezVous, pk=pk, type_rendezvous=RendezVous.TypeRendezVous.TELECONSULTATION)
+    profil_pro = getattr(request.user, "profil_professionnel", None)
+
+    est_participant = rdv.patient_id == request.user.id or (profil_pro and rdv.professionnel_id == profil_pro.id)
+    if not est_participant:
+        messages.error(request, "Vous n'avez pas accès à cette salle de téléconsultation.")
+        return redirect("mes_rendezvous")
+
+    if rdv.statut != RendezVous.Statut.CONFIRME:
+        messages.warning(request, "Ce rendez-vous n'est pas encore confirmé par le professionnel.")
+        return redirect("mes_rendezvous")
+
+    return render(request, "core/salle_teleconsultation.html", {"rdv": rdv})
+
+
+# ---------------------------------------------------------------------------
+# Téléconsultation : annuaire de professionnels, prise de rendez-vous,
+# confirmation côté professionnel, salle vidéo Jitsi Meet.
+# ---------------------------------------------------------------------------
+@login_required
+def devenir_professionnel(request):
+    """Permet à un utilisateur de créer ou modifier sa fiche professionnelle.
+    Reste invisible dans l'annuaire tant qu'un administrateur ne l'a pas
+    vérifié (champ `verifie`, modifiable uniquement via /admin/ pour l'instant)."""
+    profil_pro = getattr(request.user, "profil_professionnel", None)
+
+    if request.method == "POST":
+        form = ProfessionnelForm(request.POST, instance=profil_pro)
+        if form.is_valid():
+            pro = form.save(commit=False)
+            pro.utilisateur = request.user
+            pro.save()
+            if not profil_pro:
+                messages.success(
+                    request,
+                    "Votre fiche professionnelle a été créée. Elle sera visible dans l'annuaire "
+                    "après vérification par un administrateur."
+                )
+            else:
+                messages.success(request, "Votre fiche professionnelle a été mise à jour.")
+            return redirect("devenir_professionnel")
+    else:
+        form = ProfessionnelForm(instance=profil_pro)
+
+    return render(request, "core/devenir_professionnel.html", {
+        "form": form, "profil_pro": profil_pro,
+    })
+
+
+@login_required
+def annuaire_professionnels(request):
+    professionnels = Professionnel.objects.filter(verifie=True).select_related("utilisateur")
+    specialite_filtre = request.GET.get("specialite", "")
+    if specialite_filtre:
+        professionnels = professionnels.filter(specialite=specialite_filtre)
+
+    return render(request, "core/annuaire_professionnels.html", {
+        "professionnels": professionnels,
+        "specialites": Professionnel.Specialite.choices,
+        "specialite_filtre": specialite_filtre,
+    })
+
+
+@login_required
+def demander_rendezvous(request, professionnel_id):
+    professionnel = get_object_or_404(Professionnel, pk=professionnel_id, verifie=True)
+
+    if request.method == "POST":
+        form = RendezVousForm(request.POST)
+        if form.is_valid():
+            rdv = form.save(commit=False)
+            rdv.patient = request.user
+            rdv.professionnel = professionnel
+            rdv.statut = RendezVous.Statut.DEMANDE
+            rdv.save()
+            messages.success(
+                request,
+                f"Votre demande de rendez-vous avec {professionnel.utilisateur.get_full_name() or professionnel.utilisateur.username} "
+                "a été envoyée. Vous serez notifié(e) une fois confirmée."
+            )
+            return redirect("mes_rendezvous")
+    else:
+        form = RendezVousForm()
+
+    return render(request, "core/demander_rendezvous.html", {
+        "form": form, "professionnel": professionnel,
+    })
+
+
+@login_required
+def mes_rendezvous(request):
+    rendezvous_patient = request.user.rendezvous_en_tant_que_patient.select_related(
+        "professionnel__utilisateur"
+    )
+
+    profil_pro = getattr(request.user, "profil_professionnel", None)
+    rendezvous_professionnel = None
+    if profil_pro:
+        rendezvous_professionnel = profil_pro.rendezvous_recus.select_related("patient")
+
+    return render(request, "core/mes_rendezvous.html", {
+        "rendezvous_patient": rendezvous_patient,
+        "rendezvous_professionnel": rendezvous_professionnel,
+    })
+
+
+@login_required
+def confirmer_rendezvous(request, pk):
+    profil_pro = getattr(request.user, "profil_professionnel", None)
+    if not profil_pro:
+        messages.error(request, "Action réservée aux professionnels.")
+        return redirect("mes_rendezvous")
+
+    rdv = get_object_or_404(RendezVous, pk=pk, professionnel=profil_pro)
+    rdv.statut = RendezVous.Statut.CONFIRME
+    rdv.save()
+    messages.success(request, "Rendez-vous confirmé.")
+    return redirect("mes_rendezvous")
+
+
+@login_required
+def annuler_rendezvous(request, pk):
+    profil_pro = getattr(request.user, "profil_professionnel", None)
+    rdv = get_object_or_404(RendezVous, pk=pk)
+
+    # Seuls le patient concerné ou le professionnel concerné peuvent annuler.
+    est_le_patient = rdv.patient_id == request.user.id
+    est_le_professionnel = profil_pro and rdv.professionnel_id == profil_pro.id
+    if not (est_le_patient or est_le_professionnel):
+        messages.error(request, "Vous n'êtes pas autorisé(e) à annuler ce rendez-vous.")
+        return redirect("mes_rendezvous")
+
+    rdv.statut = RendezVous.Statut.ANNULE
+    rdv.save()
+    messages.success(request, "Rendez-vous annulé.")
+    return redirect("mes_rendezvous")
+
+
+@login_required
+def salle_teleconsultation(request, pk):
+    profil_pro = getattr(request.user, "profil_professionnel", None)
+    rdv = get_object_or_404(RendezVous, pk=pk)
+
+    est_le_patient = rdv.patient_id == request.user.id
+    est_le_professionnel = profil_pro and rdv.professionnel_id == profil_pro.id
+    if not (est_le_patient or est_le_professionnel):
+        messages.error(request, "Vous n'êtes pas autorisé(e) à accéder à cette téléconsultation.")
+        return redirect("mes_rendezvous")
+
+    if rdv.type_rendezvous != RendezVous.TypeRendezVous.TELECONSULTATION:
+        messages.error(request, "Ce rendez-vous n'est pas une téléconsultation.")
+        return redirect("mes_rendezvous")
+
+    if rdv.statut != RendezVous.Statut.CONFIRME:
+        messages.warning(request, "Ce rendez-vous doit être confirmé avant d'accéder à la salle vidéo.")
+        return redirect("mes_rendezvous")
+
+    return render(request, "core/salle_teleconsultation.html", {"rdv": rdv})

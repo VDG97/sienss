@@ -1,0 +1,25 @@
+{% extends "core/base.html" %}
+{% block titre %}Téléconsultation{% endblock %}
+{% block contenu %}
+<div class="carte">
+    <h1>Téléconsultation</h1>
+    <p class="discret">
+        {{ rdv.patient.get_full_name|default:rdv.patient.username }}
+        avec {{ rdv.professionnel.utilisateur.get_full_name|default:rdv.professionnel.utilisateur.username }}
+        — {{ rdv.date_heure|date:"d/m/Y à H:i" }}
+    </p>
+    <p class="discret" style="font-size:0.8rem;">Cette salle vidéo utilise Jitsi Meet — aucune installation nécessaire, autorisez simplement votre caméra/micro dans le navigateur.</p>
+</div>
+
+<div class="carte" style="padding:0; overflow:hidden;">
+    <iframe
+        src="{{ rdv.lien_video }}"
+        style="width:100%; height:70vh; border:none; display:block;"
+        allow="camera; microphone; fullscreen; display-capture; autoplay">
+    </iframe>
+</div>
+
+<div class="carte">
+    <a href="{% url 'mes_rendezvous' %}" class="bouton discret-bouton">Retour à mes rendez-vous</a>
+</div>
+{% endblock %}

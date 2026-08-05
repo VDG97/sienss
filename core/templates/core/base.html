@@ -190,11 +190,11 @@
         .bouton.discret-bouton { background: #F0EDE4; color: var(--texte); }
 
         /* ---------- Formulaires ---------- */
-        .champ { margin-bottom: 1rem; }
+        .champ { margin-bottom: 0.85rem; }
         .champ label {
             display: block;
-            margin-bottom: 0.35rem;
-            font-size: 0.82rem;
+            margin-bottom: 0.3rem;
+            font-size: 0.78rem;
             font-weight: 600;
             color: var(--texte-doux);
             text-transform: uppercase;
@@ -202,15 +202,17 @@
         }
         .champ input, .champ select, .champ textarea {
             width: 100%;
-            padding: 0.62rem 0.75rem;
+            max-width: 380px;
+            padding: 0.5rem 0.7rem;
             border: 1.5px solid var(--bordure);
-            border-radius: 10px;
-            font-size: 0.95rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
             font-family: inherit;
             background: #fff;
             color: var(--texte);
             transition: border-color 0.15s;
         }
+        .champ textarea { max-width: 100%; }
         .champ input:focus, .champ select:focus, .champ textarea:focus {
             outline: none;
             border-color: var(--vert);
@@ -221,6 +223,7 @@
             grid-template-columns: 1fr 1fr;
             gap: 0 1rem;
         }
+        .grille-champs .champ input, .grille-champs .champ select { max-width: 100%; }
         @media (max-width: 480px) {
             .grille-champs { grid-template-columns: 1fr; }
         }
@@ -283,13 +286,16 @@
 <body>
 <header>
     <div class="barre-nav">
-        <a href="{% url 'tableau_bord' %}" class="logo">SIENSS</a>
+        <a href="{% if user.is_authenticated %}{% url 'tableau_bord' %}{% else %}{% url 'accueil' %}{% endif %}" class="logo">SIENSS</a>
 
         {% if user.is_authenticated %}
         <nav class="liens-desktop">
             <a href="{% url 'tableau_bord' %}">Tableau de bord</a>
             <a href="{% url 'ajouter_repas' %}">Ajouter un repas</a>
             <a href="{% url 'historique' %}">Historique</a>
+            <a href="{% url 'conseils' %}">Conseils</a>
+            <a href="{% url 'annuaire_professionnels' %}">Professionnels</a>
+            <a href="{% url 'mes_rendezvous' %}">Rendez-vous</a>
             <a href="{% url 'informations_medicales' %}">Infos médicales</a>
             <a href="{% url 'profil_sante' %}">Profil</a>
             <form method="post" action="{% url 'deconnexion' %}" class="form-deconnexion">
@@ -312,6 +318,9 @@
             <a href="{% url 'tableau_bord' %}">Tableau de bord</a>
             <a href="{% url 'ajouter_repas' %}">Ajouter un repas</a>
             <a href="{% url 'historique' %}">Historique</a>
+            <a href="{% url 'conseils' %}">Conseils</a>
+            <a href="{% url 'annuaire_professionnels' %}">Professionnels</a>
+            <a href="{% url 'mes_rendezvous' %}">Rendez-vous</a>
             <a href="{% url 'informations_medicales' %}">Infos médicales</a>
             <a href="{% url 'profil_sante' %}">Profil</a>
             <form method="post" action="{% url 'deconnexion' %}" class="form-deconnexion">
@@ -334,5 +343,11 @@
     {% endif %}
     {% block contenu %}{% endblock %}
 </main>
+<footer style="max-width:640px; margin:2rem auto 0; padding:0 1.1rem 2.5rem; text-align:center;">
+    <p style="font-family:'Fraunces',serif; font-style:italic; color:var(--texte-doux); font-size:0.92rem; line-height:1.5;">
+        « {{ citation_texte }} »<br>
+        <span style="font-size:0.78rem; font-style:normal; opacity:0.8;">— {{ citation_auteur }}</span>
+    </p>
+</footer>
 </body>
 </html>

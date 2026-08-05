@@ -1,0 +1,35 @@
+{% extends "core/base.html" %}
+{% block titre %}Espace professionnel{% endblock %}
+{% block contenu %}
+<div class="carte">
+    <h1>Espace professionnel de santé</h1>
+    {% if profil_pro %}
+        {% if profil_pro.verifie %}
+            <p style="color:var(--vert); font-weight:600;">✓ Votre profil est vérifié et visible dans l'annuaire.</p>
+        {% else %}
+            <p class="discret">⏳ Votre profil est en attente de vérification par un administrateur. Il ne sera visible dans l'annuaire qu'une fois vérifié.</p>
+        {% endif %}
+    {% else %}
+        <p class="discret">Vous êtes médecin, nutritionniste, diététicien(ne) ou autre spécialiste ? Créez votre fiche pour apparaître dans l'annuaire et recevoir des demandes de rendez-vous (présentiel ou téléconsultation).</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="champ">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<p class="discret" style="font-size:0.78rem;">{{ field.help_text }}</p>{% endif %}
+                {% for error in field.errors %}<p style="color:#c0392b;font-size:0.85rem;">{{ error }}</p>{% endfor %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="bouton">{% if profil_pro %}Mettre à jour{% else %}Créer ma fiche professionnelle{% endif %}</button>
+    </form>
+</div>
+
+{% if profil_pro %}
+<div class="carte">
+    <p class="discret" style="margin:0;">Consultez vos demandes de rendez-vous reçues dans <a href="{% url 'mes_rendezvous' %}">Mes rendez-vous</a>.</p>
+</div>
+{% endif %}
+{% endblock %}

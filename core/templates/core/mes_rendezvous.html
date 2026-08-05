@@ -1,0 +1,59 @@
+{% extends "core/base.html" %}
+{% block titre %}Mes rendez-vous{% endblock %}
+{% block contenu %}
+<div class="carte">
+    <h1>Mes rendez-vous</h1>
+</div>
+
+<div class="carte">
+    <h2>En tant que patient(e)</h2>
+    {% for rdv in rendezvous_patient %}
+        <div class="alerte {% if rdv.statut == 'confirme' %}info{% elif rdv.statut == 'annule' %}risque_eleve{% else %}vigilance{% endif %}" style="margin-bottom:0.8rem;">
+            <strong>{{ rdv.professionnel.utilisateur.get_full_name|default:rdv.professionnel.utilisateur.username }}</strong>
+            ({{ rdv.professionnel.libelle_specialite }})<br>
+            {{ rdv.date_heure|date:"d/m/Y à H:i" }} — {{ rdv.get_type_rendezvous_display }} — <strong>{{ rdv.get_statut_display }}</strong>
+            {% if rdv.motif %}<br><span class="discret">Motif : {{ rdv.motif }}</span>{% endif %}
+            <div style="margin-top:0.5rem;">
+                {% if rdv.statut == 'confirme' and rdv.type_rendezvous == 'teleconsultation' %}
+                    <a href="{% url 'salle_teleconsultation' rdv.id %}" class="bouton" style="font-size:0.82rem; padding:0.4rem 0.9rem;">Rejoindre la téléconsultation</a>
+                {% endif %}
+                {% if rdv.statut != 'annule' and rdv.statut != 'termine' %}
+                    <a href="{% url 'annuler_rendezvous' rdv.id %}" class="discret" style="color:var(--rouge); margin-left:0.6rem;">annuler</a>
+                {% endif %}
+            </div>
+        </div>
+    {% empty %}
+        <p class="discret">Aucun rendez-vous pour l'instant. <a href="{% url 'annuaire_professionnels' %}">Trouver un professionnel</a></p>
+    {% endfor %}
+</div>
+
+{% if rendezvous_professionnel is not None %}
+<div class="carte">
+    <h2>Demandes reçues (en tant que professionnel)</h2>
+    {% for rdv in rendezvous_professionnel %}
+        <div class="alerte {% if rdv.statut == 'confirme' %}info{% elif rdv.statut == 'annule' %}risque_eleve{% else %}vigilance{% endif %}" style="margin-bottom:0.8rem;">
+            <strong>{{ rdv.patient.get_full_name|default:rdv.patient.username }}</strong><br>
+            {{ rdv.date_heure|date:"d/m/Y à H:i" }} — {{ rdv.get_type_rendezvous_display }} — <strong>{{ rdv.get_statut_display }}</strong>
+            {% if rdv.motif %}<br><span class="discret">Motif : {{ rdv.motif }}</span>{% endif %}
+            <div style="margin-top:0.5rem;">
+                {% if rdv.statut == 'demande' %}
+                    <a href="{% url 'confirmer_rendezvous' rdv.id %}" class="bouton" style="font-size:0.82rem; padding:0.4rem 0.9rem;">Confirmer</a>
+                {% endif %}
+                {% if rdv.statut == 'confirme' and rdv.type_rendezvous == 'teleconsultation' %}
+                    <a href="{% url 'salle_teleconsultation' rdv.id %}" class="bouton" style="font-size:0.82rem; padding:0.4rem 0.9rem;">Rejoindre la téléconsultation</a>
+                {% endif %}
+                {% if rdv.statut != 'annule' and rdv.statut != 'termine' %}
+                    <a href="{% url 'annuler_rendezvous' rdv.id %}" class="discret" style="color:var(--rouge); margin-left:0.6rem;">annuler</a>
+                {% endif %}
+            </div>
+        </div>
+    {% empty %}
+        <p class="discret">Aucune demande reçue pour l'instant.</p>
+    {% endfor %}
+</div>
+{% else %}
+<div class="carte">
+    <p class="discret">Vous êtes professionnel de santé ? <a href="{% url 'devenir_professionnel' %}">Créez votre fiche</a> pour recevoir des demandes de rendez-vous.</p>
+</div>
+{% endif %}
+{% endblock %}

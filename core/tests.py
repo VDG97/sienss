@@ -487,3 +487,130 @@ class HistoriqueEtRechercheTests(TestCase):
 
         resp = self.client.get(reverse("rechercher_aliment"), {"q": "a"})
         self.assertEqual(resp.json()["resultats"], [])
+
+
+class AccueilEtConseilsTests(TestCase):
+    """Page d'accueil publique et moteur de conseils personnalisés."""
+
+    def test_accueil_accessible_sans_connexion(self):
+        resp = self.client.get(reverse("accueil"))
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn("Bienvenue", resp.content.decode())
+
+    def test_accueil_redirige_vers_tableau_bord_si_connecte(self):
+        Utilisateur.objects.create_user(username="deja_connecte", password="motdepasse")
+        self.client.login(username="deja_connecte", password="motdepasse")
+        resp = self.client.get(reverse("accueil"))
+        self.assertRedirects(resp, reverse("tableau_bord"))
+
+    def test_conseils_adaptes_a_objectif_perte_de_poids(self):
+        from core.models import ProfilSante
+        u = Utilisateur.objects.create_user(username="conseils_perte", password="motdepasse")
+        ProfilSante.objects.create(utilisateur=u, objectif_nutritionnel="perte_poids")
+        self.client.login(username="conseils_perte", password="motdepasse")
+
+        resp = self.client.get(reverse("conseils"))
+        self.assertEqual(resp.context["objectif_libelle"], "Perte de poids")
+        self.assertGreater(len(resp.context["combinaisons_alimentaires"]), 0)
+
+    def test_conseils_ajoute_section_hypertension_si_declaree(self):
+        u = Utilisateur.objects.create_user(username="conseils_tension", password="motdepasse")
+        PathologieUtilisateur.objects.create(utilisateur=u, pathologie="hypertension")
+        self.client.login(username="conseils_tension", password="motdepasse")
+
+        resp = self.client.get(reverse("conseils"))
+        self.assertTrue(
+            any("potassium" in c for c in resp.context["attention_particuliere"])
+        )
+
+    def test_conseils_sans_pathologie_naffiche_pas_de_section_attention(self):
+        Utilisateur.objects.create_user(username="conseils_sans_patho", password="motdepasse")
+        self.client.login(username="conseils_sans_patho", password="motdepasse")
+
+        resp = self.client.get(reverse("conseils"))
+        self.assertEqual(resp.context["attention_particuliere"], [])
+
+
+class TeleconsultationTests(TestCase):
+    """Annuaire de professionnels, prise de rendez-vous, confirmation, salle vidéo."""
+
+    def setUp(self):
+        from core.models import Professionnel
+        self.pro_user = Utilisateur.objects.create_user(username="dr_test", password="motdepasse")
+        self.professionnel = Professionnel.objects.create(
+            utilisateur=self.pro_user, specialite="cardiologue", verifie=True,
+        )
+        self.patient = Utilisateur.objects.create_user(username="patient_rdv", password="motdepasse")
+
+    def test_professionnel_non_verifie_absent_de_lannuaire(self):
+        from core.models import Professionnel
+        pro_non_verifie = Professionnel.objects.create(
+            utilisateur=Utilisateur.objects.create_user(username="pro_non_verifie", password="mdp"),
+            specialite="nutritionniste", verifie=False,
+        )
+        self.client.login(username="patient_rdv", password="motdepasse")
+        resp = self.client.get(reverse("annuaire_professionnels"))
+        self.assertNotIn(pro_non_verifie, resp.context["professionnels"])
+        self.assertIn(self.professionnel, resp.context["professionnels"])
+
+    def test_parcours_complet_demande_confirmation_salle_video(self):
+        from datetime import timedelta
+        from django.utils import timezone
+        from core.models import RendezVous
+
+        self.client.login(username="patient_rdv", password="motdepasse")
+        demain = (timezone.now() + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M")
+        self.client.post(reverse("demander_rendezvous", args=[self.professionnel.id]), {
+            "date_heure": demain, "motif": "Suivi", "type_rendezvous": "teleconsultation",
+        })
+        rdv = RendezVous.objects.get(patient=self.patient)
+        self.assertEqual(rdv.statut, RendezVous.Statut.DEMANDE)
+
+        # Le patient ne peut pas encore accéder à la salle (non confirmé)
+        resp = self.client.get(reverse("salle_teleconsultation", args=[rdv.id]), follow=True)
+        self.assertNotIn(rdv.lien_video, resp.content.decode())
+
+        # Le professionnel confirme
+        self.client.login(username="dr_test", password="motdepasse")
+        self.client.get(reverse("confirmer_rendezvous", args=[rdv.id]))
+        rdv.refresh_from_db()
+        self.assertEqual(rdv.statut, RendezVous.Statut.CONFIRME)
+        self.assertTrue(rdv.lien_video.startswith("https://meet.jit.si/sienss-"))
+
+        # Le patient peut maintenant accéder à la salle
+        self.client.login(username="patient_rdv", password="motdepasse")
+        resp = self.client.get(reverse("salle_teleconsultation", args=[rdv.id]))
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(rdv.lien_video, resp.content.decode())
+
+    def test_tiers_non_autorise_ne_peut_pas_acceder_a_la_salle(self):
+        from datetime import timedelta
+        from django.utils import timezone
+        from core.models import RendezVous
+
+        rdv = RendezVous.objects.create(
+            patient=self.patient, professionnel=self.professionnel,
+            date_heure=timezone.now() + timedelta(days=1),
+            type_rendezvous=RendezVous.TypeRendezVous.TELECONSULTATION,
+            statut=RendezVous.Statut.CONFIRME,
+        )
+        Utilisateur.objects.create_user(username="intrus", password="motdepasse")
+        self.client.login(username="intrus", password="motdepasse")
+
+        resp = self.client.get(reverse("salle_teleconsultation", args=[rdv.id]), follow=True)
+        self.assertNotIn(rdv.lien_video, resp.content.decode())
+
+    def test_annulation_rendezvous_par_le_patient(self):
+        from datetime import timedelta
+        from django.utils import timezone
+        from core.models import RendezVous
+
+        rdv = RendezVous.objects.create(
+            patient=self.patient, professionnel=self.professionnel,
+            date_heure=timezone.now() + timedelta(days=1),
+            type_rendezvous=RendezVous.TypeRendezVous.PRESENTIEL,
+        )
+        self.client.login(username="patient_rdv", password="motdepasse")
+        self.client.get(reverse("annuler_rendezvous", args=[rdv.id]))
+        rdv.refresh_from_db()
+        self.assertEqual(rdv.statut, RendezVous.Statut.ANNULE)

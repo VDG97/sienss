@@ -7,12 +7,29 @@
     <form method="post">
         {% csrf_token %}
         {% for field in form %}
-            <div class="champ">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% if field.help_text %}<p class="discret">{{ field.help_text }}</p>{% endif %}
-                {% for error in field.errors %}<p style="color:#c0392b;font-size:0.85rem;">{{ error }}</p>{% endfor %}
-            </div>
+            {% if field.name == "password1" %}
+                <div class="grille-champs">
+                    <div class="champ">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}<p class="discret" style="font-size:0.78rem;">{{ field.help_text|safe }}</p>{% endif %}
+                        {% for error in field.errors %}<p style="color:#c0392b;font-size:0.85rem;">{{ error }}</p>{% endfor %}
+                    </div>
+            {% elif field.name == "password2" %}
+                    <div class="champ">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% for error in field.errors %}<p style="color:#c0392b;font-size:0.85rem;">{{ error }}</p>{% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="champ">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}<p class="discret">{{ field.help_text }}</p>{% endif %}
+                    {% for error in field.errors %}<p style="color:#c0392b;font-size:0.85rem;">{{ error }}</p>{% endfor %}
+                </div>
+            {% endif %}
         {% endfor %}
         <button type="submit" class="bouton">Créer mon compte</button>
     </form>

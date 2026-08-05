@@ -1,0 +1,27 @@
+{% extends "core/base.html" %}
+{% block titre %}Accueil{% endblock %}
+{% block contenu %}
+<div class="carte" style="text-align:center; padding:2.5rem 1.6rem;">
+    <h1 style="font-size:1.9rem;">Bienvenue sur SIENSS 👋</h1>
+    <p style="color:var(--texte-doux); font-size:1.02rem; max-width:460px; margin:0.8rem auto 1.6rem;">
+        Votre allié quotidien pour une alimentation plus sûre et plus équilibrée.
+        Enregistrez vos repas, recevez des alertes personnalisées selon votre profil
+        de santé, et suivez votre progression — simplement.
+    </p>
+    <div style="display:flex; gap:0.7rem; justify-content:center; flex-wrap:wrap;">
+        <a href="{% url 'inscription' %}" class="bouton">Créer mon compte</a>
+        <a href="{% url 'connexion' %}" class="bouton discret-bouton">J'ai déjà un compte</a>
+    </div>
+</div>
+
+<div class="carte">
+    <h2>Comment ça marche</h2>
+    <p><strong>1. Complétez votre profil</strong> — âge, poids, allergies, pathologies éventuelles.</p>
+    <p><strong>2. Enregistrez vos repas</strong> — recherchez un aliment, choisissez une taille de portion, c'est tout.</p>
+    <p><strong>3. Recevez des alertes utiles</strong> — le système analyse chaque repas selon votre profil et vous prévient en cas de risque (allergène, excès, interaction).</p>
+</div>
+
+<div class="carte" style="border-left:4px solid var(--ambre);">
+    <p class="discret" style="margin:0;">⚠️ SIENSS est un outil d'aide et de sensibilisation. Il ne pose aucun diagnostic médical et ne remplace pas l'avis d'un professionnel de santé.</p>
+</div>
+{% endblock %}

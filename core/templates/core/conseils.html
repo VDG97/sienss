@@ -1,0 +1,35 @@
+{% extends "core/base.html" %}
+{% block titre %}Conseils personnalisés{% endblock %}
+{% block contenu %}
+<div class="carte">
+    <h1>Vos conseils personnalisés</h1>
+    <p class="discret">D'après votre objectif déclaré (<strong>{{ objectif_libelle }}</strong>) et votre profil de santé. Ces conseils sont généraux et éducatifs — ils ne remplacent pas un avis médical individualisé.</p>
+</div>
+
+{% if attention_particuliere %}
+<div class="carte" style="border-left:4px solid var(--ambre);">
+    <h2>À prendre en compte pour votre situation</h2>
+    {% for conseil in attention_particuliere %}
+        <p style="margin-bottom:0.7rem;">• {{ conseil }}</p>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="carte">
+    <h2>Associations d'aliments à privilégier</h2>
+    {% for conseil in combinaisons_alimentaires %}
+        <p style="margin-bottom:0.7rem;">• {{ conseil }}</p>
+    {% endfor %}
+</div>
+
+<div class="carte">
+    <h2>Bonnes habitudes générales</h2>
+    {% for conseil in habitudes_generales %}
+        <p style="margin-bottom:0.7rem;">• {{ conseil }}</p>
+    {% endfor %}
+</div>
+
+<div class="carte" style="border-left:4px solid var(--bleu-nuit-clair);">
+    <p class="discret" style="margin:0;">💬 Ces recommandations évoluent avec votre profil — complétez ou mettez à jour vos informations dans <a href="{% url 'profil_sante' %}">Profil</a> et <a href="{% url 'informations_medicales' %}">Infos médicales</a> pour des conseils plus précis.</p>
+</div>
+{% endblock %}

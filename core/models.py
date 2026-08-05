@@ -285,3 +285,87 @@ class Score(models.Model):
 
     def __str__(self):
         return f"{self.get_type_score_display()} = {self.valeur} ({self.utilisateur})"
+
+
+# ---------------------------------------------------------------------------
+# Téléconsultation (Chapitre 2/3.8-3.9 étendus) — annuaire de professionnels
+# et prise de rendez-vous, avec salle vidéo générée automatiquement (Jitsi
+# Meet, gratuit, sans compte ni clé API — pas de dépendance à un service
+# tiers payant pour la V1 de cette fonctionnalité).
+# ---------------------------------------------------------------------------
+class Professionnel(models.Model):
+    class Specialite(models.TextChoices):
+        MEDECIN_GENERALISTE = "medecin_generaliste", "Médecin généraliste"
+        NUTRITIONNISTE = "nutritionniste", "Nutritionniste"
+        DIETETICIEN = "dieteticien", "Diététicien"
+        CARDIOLOGUE = "cardiologue", "Cardiologue"
+        ENDOCRINOLOGUE = "endocrinologue", "Endocrinologue (diabète, thyroïde...)"
+        NEPHROLOGUE = "nephrologue", "Néphrologue"
+        AUTRE = "autre", "Autre spécialité"
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    utilisateur = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profil_professionnel"
+    )
+    specialite = models.CharField(max_length=30, choices=Specialite.choices)
+    specialite_autre = models.CharField(
+        max_length=100, blank=True, help_text="Si 'Autre spécialité' est sélectionné ci-dessus."
+    )
+    bio = models.TextField(blank=True, help_text="Présentation courte visible par les patients.")
+    numero_autorisation = models.CharField(
+        max_length=100, blank=True,
+        help_text="Numéro d'autorisation d'exercer (renforce la confiance, vérifié par l'administrateur).",
+    )
+    # Un compte nouvellement créé n'est PAS visible dans l'annuaire tant qu'un
+    # administrateur ne l'a pas vérifié (Chapitre 2 : "valider les
+    # professionnels de santé" fait partie du rôle Administrateur).
+    verifie = models.BooleanField(default=False)
+    accepte_teleconsultation = models.BooleanField(default=True)
+    date_inscription = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.utilisateur} — {self.get_specialite_display()}"
+
+    def libelle_specialite(self):
+        if self.specialite == self.Specialite.AUTRE and self.specialite_autre:
+            return self.specialite_autre
+        return self.get_specialite_display()
+
+
+class RendezVous(models.Model):
+    class TypeRendezVous(models.TextChoices):
+        PRESENTIEL = "presentiel", "Présentiel"
+        TELECONSULTATION = "teleconsultation", "Téléconsultation (vidéo)"
+
+    class Statut(models.TextChoices):
+        DEMANDE = "demande", "Demande envoyée"
+        CONFIRME = "confirme", "Confirmé"
+        ANNULE = "annule", "Annulé"
+        TERMINE = "termine", "Terminé"
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    patient = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="rendezvous_en_tant_que_patient"
+    )
+    professionnel = models.ForeignKey(
+        Professionnel, on_delete=models.CASCADE, related_name="rendezvous_recus"
+    )
+    date_heure = models.DateTimeField()
+    motif = models.CharField(max_length=255, blank=True)
+    type_rendezvous = models.CharField(max_length=20, choices=TypeRendezVous.choices)
+    statut = models.CharField(max_length=20, choices=Statut.choices, default=Statut.DEMANDE)
+    date_creation = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-date_heure"]
+
+    def __str__(self):
+        return f"RDV {self.patient} avec {self.professionnel} le {self.date_heure:%d/%m/%Y %H:%M}"
+
+    @property
+    def lien_video(self):
+        """Salle Jitsi Meet générée à la volée à partir de l'identifiant unique
+        du rendez-vous — aucune clé API, aucun compte tiers nécessaire."""
+        if self.type_rendezvous != self.TypeRendezVous.TELECONSULTATION:
+            return None
+        return f"https://meet.jit.si/sienss-{self.id}"
