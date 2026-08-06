@@ -36,7 +36,7 @@ du cahier des charges.
   suppression de compte avec confirmation par mot de passe (efface aussi les données liées en
   cascade). Testé de bout en bout : réinitialisation complète du mot de passe jusqu'à connexion
   avec le nouveau, suppression refusée avec mauvais mot de passe puis acceptée avec le bon.
-- **Tests automatisés** (`core/tests.py`, 29 tests, tous verts) : moteur de règles (R01, R09, R12,
+- **Tests automatisés** (`core/tests.py`, 38 tests, tous verts) : moteur de règles (R01, R09, R12,
   R14, R17, dé-duplication), scores (favorable/défavorable, absence d'historique), écrans
   (inscription, parcours complet, refus d'un repas vide, redirections d'authentification).
   Lancer avec `python manage.py test core`.
@@ -93,7 +93,39 @@ béninois/africains, d'où l'intérêt de garder et compléter le fichier `alime
 - Écran de recherche d'aliment plus ergonomique (actuellement un simple menu déroulant — à
   terme, une recherche avec autocomplétion sera nécessaire maintenant que la base grandit)
 
-## Démarrer en local
+## Fonctionnalités V2 déjà ajoutées (au-delà du périmètre V1 initial)
+
+Suite aux retours d'usage réels, plusieurs fonctionnalités prévues pour la V2 ont été avancées :
+
+- **Téléconsultation** (`core/models.py` : `Professionnel`, `RendezVous`) : annuaire de
+  professionnels par spécialité (médecin généraliste, nutritionniste, diététicien,
+  cardiologue, endocrinologue, néphrologue, autre), prise de rendez-vous (présentiel ou
+  téléconsultation), confirmation côté professionnel, salle vidéo générée automatiquement
+  via **Jitsi Meet** (gratuit, sans compte ni clé API — voir `RendezVous.lien_video`).
+  Un professionnel n'apparaît dans l'annuaire qu'après vérification manuelle par un
+  administrateur (`Professionnel.verifie`, via `/admin/`). Testé de bout en bout : création
+  de fiche → vérification → recherche par spécialité → demande de RDV → confirmation →
+  accès à la salle vidéo.
+- **Conseils personnalisés** (`core/conseils.py`) : combinaisons alimentaires favorables
+  selon l'objectif nutritionnel déclaré (perte de poids / prise de masse / maintien /
+  équilibre / suivi médical), et mises en garde spécifiques selon les pathologies
+  déclarées (diabète, hypertension, insuffisance rénale). Volontairement non chiffré
+  (pas de calories/grammes cibles) pour rester dans le registre de l'éducation
+  nutritionnelle générale, pas de la prescription.
+- **Page d'accueil publique** avec message de bienvenue, pour les visiteurs non connectés.
+- **Citations sur l'alimentation et la santé** affichées aléatoirement en pied de page
+  (voir `core/citations.py` et le context processor `core/context_processors.py`).
+- **Base alimentaire élargie à 120 aliments** (voir section base alimentaire plus bas).
+- **Formulaires resserrés** : largeur maximale plafonnée sur les champs courts, densité
+  réduite, mots de passe côte à côte à l'inscription.
+
+### Prochaine étape recommandée pour la téléconsultation
+Actuellement, seul un administrateur peut vérifier un professionnel (`/admin/` →
+Professionnel → cocher `verifie`). Pour une vraie mise en production, prévoir un écran
+dédié de validation (upload d'un justificatif d'exercice, etc.) plutôt que le formulaire
+admin brut — c'est listé comme amélioration V3 dans le cahier des charges d'origine.
+
+
 
 ```bash
 pip install -r requirements.txt --break-system-packages   # ou dans un venv, sans ce flag
@@ -134,7 +166,7 @@ analyser_repas(mon_repas)
 7. **Validation scientifique** : faire relire les 18 règles, les seuils des scores, ET les valeurs
    nutritionnelles des aliments béninois (`niveau_confiance="faible"`) par un(e) diététicien(ne)
    avant de passer leur statut en production.
-8. ~~Tests automatisés~~ ✅ fait — 29 tests, tous verts (`python manage.py test core`)
+8. ~~Tests automatisés~~ ✅ fait — 38 tests, tous verts (`python manage.py test core`)
 9. ~~Réinitialisation de mot de passe et suppression de compte~~ ✅ fait
 10. ~~Édition des allergies/pathologies/traitements~~ ✅ fait
 11. ~~Filtres de l'historique par période~~ ✅ fait (jour/7 jours/30 jours/1 an)
@@ -144,7 +176,7 @@ analyser_repas(mon_repas)
 ## Périmètre V1 — complet
 
 Toutes les fonctionnalités prévues au cahier des charges pour la V1 sont maintenant construites
-et testées (29 tests automatisés). Il ne reste plus que des étapes hors développement logiciel :
+et testées (38 tests automatisés). Il ne reste plus que des étapes hors développement logiciel :
 validation professionnelle des règles/données, et déploiement réel.
 
 ## Périmètre V1 (MVP) — état d'avancement

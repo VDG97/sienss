@@ -67,13 +67,4 @@ urlpatterns = [
     path('rendez-vous/<uuid:pk>/confirmer/', core_views.confirmer_rendezvous, name='confirmer_rendezvous'),
     path('rendez-vous/<uuid:pk>/annuler/', core_views.annuler_rendezvous, name='annuler_rendezvous'),
     path('rendez-vous/<uuid:pk>/salle/', core_views.salle_teleconsultation, name='salle_teleconsultation'),
-
-    # Téléconsultation
-    path('professionnels/', core_views.annuaire_professionnels, name='annuaire_professionnels'),
-    path('professionnels/devenir/', core_views.devenir_professionnel, name='devenir_professionnel'),
-    path('professionnels/<uuid:pk>/rendez-vous/', core_views.demander_rendezvous, name='demander_rendezvous'),
-    path('rendez-vous/', core_views.mes_rendezvous, name='mes_rendezvous'),
-    path('rendez-vous/<uuid:pk>/confirmer/', core_views.confirmer_rendezvous, name='confirmer_rendezvous'),
-    path('rendez-vous/<uuid:pk>/annuler/', core_views.annuler_rendezvous, name='annuler_rendezvous'),
-    path('rendez-vous/<uuid:pk>/salle/', core_views.salle_teleconsultation, name='salle_teleconsultation'),
 ]
