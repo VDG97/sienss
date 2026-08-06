@@ -1,0 +1,52 @@
+{% extends "core/base.html" %}
+{% block titre %}Validation des professionnels{% endblock %}
+{% block contenu %}
+<div class="carte">
+    <h1>Validation des professionnels</h1>
+    <p class="discret">Un professionnel n'apparaît dans l'annuaire qu'une fois vérifié ici.</p>
+</div>
+
+<div class="carte">
+    <h2>En attente de vérification ({{ en_attente|length }})</h2>
+    {% for pro in en_attente %}
+        <div class="alerte vigilance" style="margin-bottom:0.9rem;">
+            <strong>{{ pro.utilisateur.get_full_name|default:pro.utilisateur.username }}</strong>
+            — {{ pro.libelle_specialite }}<br>
+            <span class="discret">{{ pro.utilisateur.email }}</span><br>
+            {% if pro.numero_autorisation %}
+                <span class="discret">N° autorisation : {{ pro.numero_autorisation }}</span><br>
+            {% else %}
+                <span class="discret" style="color:var(--ambre);">⚠️ Aucun numéro d'autorisation renseigné</span><br>
+            {% endif %}
+            {% if pro.bio %}<p style="margin:0.5rem 0;">{{ pro.bio }}</p>{% endif %}
+            <span class="discret">Inscrit(e) le {{ pro.date_inscription|date:"d/m/Y" }}</span>
+
+            <div style="margin-top:0.7rem; display:flex; gap:0.6rem;">
+                <form method="post" action="{% url 'valider_professionnel' pro.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="bouton" style="font-size:0.85rem; padding:0.45rem 1rem;">✓ Valider</button>
+                </form>
+                <form method="post" action="{% url 'rejeter_professionnel' pro.id %}" onsubmit="return confirm('Rejeter et supprimer définitivement cette fiche professionnelle ?');">
+                    {% csrf_token %}
+                    <button type="submit" style="font-size:0.85rem; padding:0.45rem 1rem; background:none; border:1.5px solid var(--rouge); color:var(--rouge); border-radius:999px; cursor:pointer;">✕ Rejeter</button>
+                </form>
+            </div>
+        </div>
+    {% empty %}
+        <p class="discret">Aucune fiche en attente de vérification.</p>
+    {% endfor %}
+</div>
+
+{% if deja_verifies %}
+<div class="carte">
+    <h2>Déjà vérifiés (20 plus récents)</h2>
+    {% for pro in deja_verifies %}
+        <p style="margin-bottom:0.5rem;">
+            <strong>{{ pro.utilisateur.get_full_name|default:pro.utilisateur.username }}</strong>
+            — {{ pro.libelle_specialite }}
+            <span class="discret">({{ pro.utilisateur.email }})</span>
+        </p>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

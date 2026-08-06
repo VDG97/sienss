@@ -2,7 +2,7 @@ from datetime import timedelta
 from decimal import Decimal
 
 from django.contrib.auth import login, logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.views import LoginView
 from django.contrib import messages
 from django.db import models
@@ -471,3 +471,42 @@ def salle_teleconsultation(request, pk):
         return redirect("mes_rendezvous")
 
     return render(request, "core/salle_teleconsultation.html", {"rdv": rdv})
+
+
+# ---------------------------------------------------------------------------
+# Validation des professionnels par un administrateur (remplace le passage
+# obligatoire par /admin/ pour cette action courante — Chapitre 2 : "valider
+# les professionnels de santé" fait partie du rôle Administrateur).
+# ---------------------------------------------------------------------------
+def _est_administrateur(user):
+    return user.is_authenticated and user.is_staff
+
+
+@user_passes_test(_est_administrateur, login_url="connexion")
+def validation_professionnels(request):
+    en_attente = Professionnel.objects.filter(verifie=False).select_related("utilisateur").order_by("date_inscription")
+    deja_verifies = Professionnel.objects.filter(verifie=True).select_related("utilisateur").order_by("-date_inscription")[:20]
+    return render(request, "core/validation_professionnels.html", {
+        "en_attente": en_attente,
+        "deja_verifies": deja_verifies,
+    })
+
+
+@user_passes_test(_est_administrateur, login_url="connexion")
+def valider_professionnel(request, pk):
+    pro = get_object_or_404(Professionnel, pk=pk)
+    if request.method == "POST":
+        pro.verifie = True
+        pro.save()
+        messages.success(request, f"{pro.utilisateur.get_full_name() or pro.utilisateur.username} est maintenant vérifié(e) et visible dans l'annuaire.")
+    return redirect("validation_professionnels")
+
+
+@user_passes_test(_est_administrateur, login_url="connexion")
+def rejeter_professionnel(request, pk):
+    pro = get_object_or_404(Professionnel, pk=pk)
+    if request.method == "POST":
+        nom = pro.utilisateur.get_full_name() or pro.utilisateur.username
+        pro.delete()
+        messages.success(request, f"La fiche professionnelle de {nom} a été rejetée et supprimée.")
+    return redirect("validation_professionnels")

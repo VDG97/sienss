@@ -67,4 +67,9 @@ urlpatterns = [
     path('rendez-vous/<uuid:pk>/confirmer/', core_views.confirmer_rendezvous, name='confirmer_rendezvous'),
     path('rendez-vous/<uuid:pk>/annuler/', core_views.annuler_rendezvous, name='annuler_rendezvous'),
     path('rendez-vous/<uuid:pk>/salle/', core_views.salle_teleconsultation, name='salle_teleconsultation'),
+
+    # Validation des professionnels par un administrateur
+    path('administration/professionnels/', core_views.validation_professionnels, name='validation_professionnels'),
+    path('administration/professionnels/<uuid:pk>/valider/', core_views.valider_professionnel, name='valider_professionnel'),
+    path('administration/professionnels/<uuid:pk>/rejeter/', core_views.rejeter_professionnel, name='rejeter_professionnel'),
 ]

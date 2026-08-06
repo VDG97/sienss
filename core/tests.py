@@ -531,6 +531,58 @@ class AccueilEtConseilsTests(TestCase):
         self.assertEqual(resp.context["attention_particuliere"], [])
 
 
+class ValidationProfessionnelsTests(TestCase):
+    """Écran de validation des professionnels par un administrateur
+    (remplace le passage par /admin/ pour cette action)."""
+
+    def setUp(self):
+        from core.models import Professionnel
+        self.admin = Utilisateur.objects.create_user(
+            username="admin_valid", password="motdepasse", is_staff=True
+        )
+        self.utilisateur_normal = Utilisateur.objects.create_user(
+            username="normal_valid", password="motdepasse"
+        )
+        self.dr = Utilisateur.objects.create_user(username="dr_valid", password="motdepasse")
+        self.pro = Professionnel.objects.create(
+            utilisateur=self.dr, specialite="cardiologue", numero_autorisation="BJ-001"
+        )
+
+    def test_utilisateur_normal_ne_peut_pas_acceder(self):
+        self.client.login(username="normal_valid", password="motdepasse")
+        resp = self.client.get(reverse("validation_professionnels"))
+        self.assertEqual(resp.status_code, 302)
+
+    def test_administrateur_peut_acceder_et_voir_les_demandes(self):
+        self.client.login(username="admin_valid", password="motdepasse")
+        resp = self.client.get(reverse("validation_professionnels"))
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(self.pro, list(resp.context["en_attente"]))
+
+    def test_validation_rend_le_professionnel_visible_dans_annuaire(self):
+        self.client.login(username="admin_valid", password="motdepasse")
+        self.client.post(reverse("valider_professionnel", args=[self.pro.id]))
+        self.pro.refresh_from_db()
+        self.assertTrue(self.pro.verifie)
+
+        self.client.logout()
+        self.client.login(username="normal_valid", password="motdepasse")
+        resp = self.client.get(reverse("annuaire_professionnels"))
+        self.assertIn(self.pro, list(resp.context["professionnels"]))
+
+    def test_rejet_supprime_la_fiche(self):
+        from core.models import Professionnel
+        self.client.login(username="admin_valid", password="motdepasse")
+        self.client.post(reverse("rejeter_professionnel", args=[self.pro.id]))
+        self.assertFalse(Professionnel.objects.filter(pk=self.pro.id).exists())
+
+    def test_utilisateur_normal_ne_peut_pas_valider_directement(self):
+        self.client.login(username="normal_valid", password="motdepasse")
+        self.client.post(reverse("valider_professionnel", args=[self.pro.id]))
+        self.pro.refresh_from_db()
+        self.assertFalse(self.pro.verifie)
+
+
 class TeleconsultationTests(TestCase):
     """Annuaire de professionnels, prise de rendez-vous, confirmation, salle vidéo."""
 

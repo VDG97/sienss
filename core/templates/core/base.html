@@ -296,6 +296,7 @@
             <a href="{% url 'conseils' %}">Conseils</a>
             <a href="{% url 'annuaire_professionnels' %}">Professionnels</a>
             <a href="{% url 'mes_rendezvous' %}">Rendez-vous</a>
+            {% if user.is_staff %}<a href="{% url 'validation_professionnels' %}">Validation pros</a>{% endif %}
             <a href="{% url 'informations_medicales' %}">Infos médicales</a>
             <a href="{% url 'profil_sante' %}">Profil</a>
             <form method="post" action="{% url 'deconnexion' %}" class="form-deconnexion">
@@ -321,6 +322,7 @@
             <a href="{% url 'conseils' %}">Conseils</a>
             <a href="{% url 'annuaire_professionnels' %}">Professionnels</a>
             <a href="{% url 'mes_rendezvous' %}">Rendez-vous</a>
+            {% if user.is_staff %}<a href="{% url 'validation_professionnels' %}">Validation pros</a>{% endif %}
             <a href="{% url 'informations_medicales' %}">Infos médicales</a>
             <a href="{% url 'profil_sante' %}">Profil</a>
             <form method="post" action="{% url 'deconnexion' %}" class="form-deconnexion">
